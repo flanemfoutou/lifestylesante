@@ -25,13 +25,6 @@ def home_view(request):
     employe = Employe.objects.get(user=request.user)
     return render(request, 'main.html', {'employe': employe})
 
-
-
-
-
-
-
-
 def find_user_view(request):
     # Vérifiez si la requête est AJAX
     if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
@@ -77,17 +70,6 @@ def find_user_view(request):
     # Si la requête n'est pas AJAX, renvoyer une réponse 400 (mauvaise requête)
     return HttpResponseBadRequest('Invalid request')
 
-
-
-
-
-
-
-
-
-
-
-
 class DasboardView(View):
     def get(self, request):
         return render(request, "registration/connexion.html")
@@ -107,10 +89,9 @@ class DasboardView(View):
         return redirect("dashboard")
         
 
-
 @method_decorator(login_required, name='dispatch')
 class DeconnexionPageView(View):
     def get(self, request):
         logout(request)
         return redirect("connexion")
-    
+
