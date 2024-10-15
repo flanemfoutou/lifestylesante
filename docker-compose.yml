@@ -11,12 +11,8 @@ services:
         depends_on: # <-- wait for mysql to be "ready" before starting this service
             - mysql
         networks:
-            nginx_network:
-                aliases:
-                    - django  # <-- Ajout d'un alias explicite pour le service 'django'
-            mysql_network:
-                aliases:
-                    - django
+            - nginx_network
+            - mysql_network
     nginx:
         restart: always
         image: nginx:1.13
