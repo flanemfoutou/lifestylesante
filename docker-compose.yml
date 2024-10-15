@@ -17,7 +17,7 @@ services:
         restart: always
         image: nginx:1.13
         ports:
-            - 9080:8000
+            - 8000:8000
 #            - 80:8000
 #            - 443:443
         volumes:
@@ -26,7 +26,7 @@ services:
 #            - ./config/ssl/your_domain.com.crt:/etc/nginx/your_domain.com.crt # <-- your SSL certificate here
 #            - ./config/ssl/your_domain.com.key:/etc/nginx/your_domain.com.key # <-- your key here
             - ./logs:/home/lifestylesante/logs_app
-            - ./lifestylesante/media:/home/lifestylesante/media
+            - ./lifestylesante/media:/home/lifestylesante/medias
             - ./lifestylesante/static:/home/lifestylesante/static
         depends_on:  # <-- wait for django to be "ready" before starting this service
             - django
