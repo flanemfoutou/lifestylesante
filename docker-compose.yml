@@ -3,7 +3,7 @@ version: '3'
 services:
     django:
         build: .
-        command: gunicorn -b 0.0.0.0:8000 -w 4 main.wsgi # <-- for production, 4 workers
+        command: gunicorn -b 0.0.0.0:8000 -w 4 lifestylesante.main.wsgi # <-- for production, 4 workers
         volumes:
             - ./lifestylesante:/home/lifestylesante
         expose:
