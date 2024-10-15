@@ -11,20 +11,24 @@ services:
         depends_on: # <-- wait for mysql to be "ready" before starting this service
             - mysql
         networks:
-            - nginx_network
-            - mysql_network
+            nginx_network:
+                aliases:
+                    - django  # <-- Ajout d'un alias explicite pour le service 'django'
+            mysql_network:
+                aliases:
+                    - django
     nginx:
         restart: always
         image: nginx:1.13
         ports:
             - 8000:8000
-#            - 80:8000
-#            - 443:443
+            # - 80:8000
+            # - 443:443
         volumes:
             - ./config/nginx/conf.d:/etc/nginx/conf.d # <-- for using non-SSL
-#            - ./config/nginx-ssl/conf.d:/etc/nginx/conf.d <-- for using SSL
-#            - ./config/ssl/your_domain.com.crt:/etc/nginx/your_domain.com.crt # <-- your SSL certificate here
-#            - ./config/ssl/your_domain.com.key:/etc/nginx/your_domain.com.key # <-- your key here
+            # - ./config/nginx-ssl/conf.d:/etc/nginx/conf.d <-- for using SSL
+            # - ./config/ssl/your_domain.com.crt:/etc/nginx/your_domain.com.crt # <-- your SSL certificate here
+            # - ./config/ssl/your_domain.com.key:/etc/nginx/your_domain.com.key # <-- your key here
             - ./logs:/home/lifestylesante/logs_app
             - ./lifestylesante/media:/home/lifestylesante/medias
             - ./lifestylesante/static:/home/lifestylesante/static
@@ -32,6 +36,7 @@ services:
             - django
         networks:
             - nginx_network
+
     mysql:
         image: mysql:5.7
         volumes:
@@ -65,6 +70,8 @@ networks:
         driver: bridge
     mysql_network:
         driver: bridge
+
+
 
 
 
