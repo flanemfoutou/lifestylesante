@@ -17,6 +17,10 @@
 
   ```bash
   docker-compose up --build
+
+  ou (arriere plan)
+
+  docker-compose up --build -d
   ```
 
 4. Après avoir exécuté les étapes ci-dessus, vous devriez voir le site Django fonctionner sur le port 9080. Rendez-vous sur le lien suivant pour vérifier. Si vous voyez la fusée Django sur la page, tout devrait fonctionner correctement.

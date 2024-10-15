@@ -65,3 +65,6 @@ networks:
         driver: bridge
     mysql_network:
         driver: bridge
+
+
+
