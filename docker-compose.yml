@@ -57,5 +57,6 @@ services:
 
 volumes:
   static:
+  medias:
   db_data:
 
