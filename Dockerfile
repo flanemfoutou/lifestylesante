@@ -4,10 +4,7 @@ FROM python:3.9
 COPY ./requirements.txt /app/requirements.txt
 
 # Copier l'application dans le répertoire de travail
-COPY ./lifestylesante /app
-
-# Copier et rendre exécutable le script entrypoint.sh
-COPY ./entrypoint.sh /
+COPY ./lifestylesante /app/lifestylesante
 
 WORKDIR /app
 
@@ -22,6 +19,8 @@ RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
 
+# Copier et rendre exécutable le script entrypoint.sh
+COPY ./entrypoint.sh /
 RUN chmod +x /entrypoint.sh
 
 # Démarrer l'application
