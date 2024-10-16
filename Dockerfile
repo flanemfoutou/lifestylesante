@@ -6,7 +6,7 @@ COPY ./requirements.txt /app/requirements.txt
 # Copier l'application dans le répertoire de travail
 COPY ./lifestylesante /app/lifestylesante
 
-WORKDIR /app
+WORKDIR /app/lifestylesante
 
 # Installer les dépendances système requises pour dlib
 RUN apt-get update && apt-get install -y \
