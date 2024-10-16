@@ -8,8 +8,8 @@ RUN apt-get update && apt-get install -y \
 
 RUN pip install --upgrade pip
 
-COPY ./requeriments.txt .
-RUN pip install -r requeriments.txt
+COPY ./requirements.txt .
+RUN pip install -r requirements.txt
 
 COPY ./lifestylesante /app
 
