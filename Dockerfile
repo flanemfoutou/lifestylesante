@@ -1,13 +1,4 @@
 FROM python:3.9
-ENV PYTHONUNBUFFERED 1
-
-# Prerequisites for python-ldap
-RUN apt update && apt-get install -y \
-    libsasl2-dev \
-    python3-dev \
-    libldap2-dev \
-    libssl-dev \
-    php
 
 # Installer les dépendances système requises pour dlib
 RUN apt-get update && apt-get install -y \
@@ -15,19 +6,15 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# Create working directory
-RUN mkdir /home/lifestylesante
+RUN pip install --upgrade pip
 
-# Specify working directory
-WORKDIR /home/lifestylesante
+COPY ./requeriments.txt .
+RUN pip install -r requeriments.txt
 
-# Copy the requirements file to the working directory
-ADD ./requirements.txt /home/lifestylesante
+COPY ./lifestylesante /app
 
-# Install all the python packages inside the requirements file
-RUN pip install -r /home/lifestylesante/requirements.txt
+WORKDIR /app
 
-# Copy the Django site to the working directory
-ADD ./lifestylesante /home/lifestylesante
-
+COPY ./entrypoint.sh /
+ENTRYPOINT [ "sh", "/entrypoint.sh" ]
 

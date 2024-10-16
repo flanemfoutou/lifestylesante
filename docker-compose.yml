@@ -1,73 +1,61 @@
 version: '3'
 
 services:
-    django:
-        build: .
-        command: gunicorn -b 0.0.0.0:8000 -w 4 lifestylesante.main.wsgi:application # <-- for production, 4 workers
-        volumes:
-            - ./lifestylesante:/home/lifestylesante
-        expose:
-            - 8000
-        depends_on: # <-- wait for mysql to be "ready" before starting this service
-            - mysql
-        networks:
-            - nginx_network
-            - mysql_network
-    nginx:
-        restart: always
-        image: nginx:1.13
-        ports:
-            - 8000:8000
-            # - 80:8000
-            # - 443:443
-        volumes:
-            - ./config/nginx/conf.d:/etc/nginx/conf.d # <-- for using non-SSL
-            # - ./config/nginx-ssl/conf.d:/etc/nginx/conf.d <-- for using SSL
-            # - ./config/ssl/your_domain.com.crt:/etc/nginx/your_domain.com.crt # <-- your SSL certificate here
-            # - ./config/ssl/your_domain.com.key:/etc/nginx/your_domain.com.key # <-- your key here
-            - ./logs:/home/lifestylesante/logs_app
-            - ./lifestylesante/media:/home/lifestylesante/medias
-            - ./lifestylesante/static:/home/lifestylesante/static
-        depends_on:  # <-- wait for django to be "ready" before starting this service
-            - django
-        networks:
-            - nginx_network
+  lifestylesante:
+    build: 
+      context: .
+    env_file:
+      - .env  # Contient les variables d'environnement pour Django et la base de données
+    volumes:
+      - static:/static
+      - medias:/medias
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db  # Attendre que le service MySQL démarre
+    environment:
+      - DB_HOST=db  # Adresse du service MySQL
+      - DB_PORT=3306  # Port MySQL
+      - DB_NAME=${MYSQL_DATABASE}  # Nom de la base de données
+      - DB_USER=${MYSQL_USER}  # Utilisateur MySQL
+      - DB_PASSWORD=${MYSQL_PASSWORD}  # Mot de passe MySQL
 
-    mysql:
-        image: mysql:5.7
-        volumes:
-            - ./mysql/data:/var/lib/mysql
-            - ./mysql/dump:/docker-entrypoint-initdb.d
-        restart: always
-        environment:
-            MYSQL_ROOT_PASSWORD: P@ssw0rd
-            MYSQL_DATABASE: site_db
-            MYSQL_USER: site_db
-            MYSQL_PASSWORD: P@ssw0rd
-        command: ['mysqld', '--character-set-server=utf8', '--collation-server=utf8_unicode_ci']
-        ports:
-            - 3306:3306
-        networks:
-            - mysql_network
-    phpmyadmin:
-        depends_on:
-            - mysql
-        image: phpmyadmin/phpmyadmin
-        restart: always
-        ports:
-            - 9090:80
-        environment:
-            PMA_HOST: mysql
-            MYSQL_ROOT_PASSWORD: P@ssw0rd
-        networks:
-            - mysql_network
-networks:
-    nginx_network:
-        driver: bridge
-    mysql_network:
-        driver: bridge
+  nginx:
+    build: ./nginx
+    volumes:
+      - static:/static
+      - medias:/medias
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - lifestylesante
 
+  db:
+    image: mysql:8.0  
+    restart: always
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}  # Nom de la base de données
+      MYSQL_USER: ${MYSQL_USER}  # Utilisateur MySQL
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}  # Mot de passe MySQL
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}  # Mot de passe root
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql  # Stocker les données dans un volume persistant
 
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: db 
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    depends_on:
+      - db  
 
-
+volumes:
+  static:
+  db_data:
 
