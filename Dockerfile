@@ -1,7 +1,7 @@
 FROM python:3.9
 
 # Copier le fichier requirements.txt et installer les dépendances Python
-COPY ./requirements.txt /app/requirements.txt
+COPY ./requirements.txt /app/lifestylesante/requirements.txt
 
 # Copier l'application dans le répertoire de travail
 COPY ./lifestylesante /app/lifestylesante
