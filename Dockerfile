@@ -16,6 +16,8 @@ RUN pip install -r requirements.txt
 # Copier l'application dans le répertoire de travail
 COPY ./lifestylesante /app
 
+RUN ls /app
+
 # Copier et rendre exécutable le script entrypoint.sh
 COPY ./entrypoint.sh /
 RUN chmod +x /entrypoint.sh
