@@ -8,13 +8,17 @@ RUN apt-get update && apt-get install -y \
 
 RUN pip install --upgrade pip
 
-COPY ./requirements.txt .
+# Copier le fichier requirements.txt et installer les dépendances Python
+COPY ./requirements.txt /app/requirements.txt
+WORKDIR /app
 RUN pip install -r requirements.txt
 
+# Copier l'application dans le répertoire de travail
 COPY ./lifestylesante /app
 
-WORKDIR /app
-
+# Copier et rendre exécutable le script entrypoint.sh
 COPY ./entrypoint.sh /
-ENTRYPOINT [ "sh", "/entrypoint.sh" ]
+RUN chmod +x /entrypoint.sh
 
+# Démarrer l'application
+ENTRYPOINT [ "sh", "/entrypoint.sh" ]
