@@ -1,5 +1,16 @@
 FROM python:3.9
 
+# Copier le fichier requirements.txt et installer les dépendances Python
+COPY ./requirements.txt /app/requirements.txt
+
+# Copier l'application dans le répertoire de travail
+COPY ./lifestylesante /app
+
+# Copier et rendre exécutable le script entrypoint.sh
+COPY ./entrypoint.sh /
+
+WORKDIR /app
+
 # Installer les dépendances système requises pour dlib
 RUN apt-get update && apt-get install -y \
     cmake \
@@ -8,18 +19,9 @@ RUN apt-get update && apt-get install -y \
 
 RUN pip install --upgrade pip
 
-# Copier le fichier requirements.txt et installer les dépendances Python
-COPY ./requirements.txt /app/requirements.txt
-WORKDIR /app
 RUN pip install -r requirements.txt
 
-# Copier l'application dans le répertoire de travail
-COPY ./lifestylesante /app
 
-RUN ls /app
-
-# Copier et rendre exécutable le script entrypoint.sh
-COPY ./entrypoint.sh /
 RUN chmod +x /entrypoint.sh
 
 # Démarrer l'application
