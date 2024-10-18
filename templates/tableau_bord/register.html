@@ -1,0 +1,49 @@
+{% extends 'base/base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-sm-12">
+            <div class="card p-4 shadow">
+                <h2 class="text-center mb-4">Inscription</h2>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-group mb-4">
+                        {{ form.as_p }}
+                    </div>
+                    <button type="submit" class="btn btn-modern w-100">S'inscrire</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+.btn-modern {
+    background-color: #007bff;
+    border: none;
+    color: white;
+    font-size: 16px;
+    padding: 12px 0;
+    border-radius: 25px;
+    transition: background-color 0.3s ease;
+}
+.btn-modern:hover {
+    background-color: #0056b3;
+}
+.card {
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    background-color: #f8f9fa;
+}
+.text-center {
+    text-align: center;
+}
+.container {
+    padding: 40px 20px;
+}
+@media (max-width: 576px) {
+    .container {
+        padding: 20px;
+    }
+}
+</style>
+{% endblock %}

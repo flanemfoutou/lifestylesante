@@ -1,12 +1,9 @@
 FROM python:3.9
 
-# Copier le fichier requirements.txt et installer les dépendances Python
-COPY ./requirements.txt /app/lifestylesante/requirements.txt
-
 # Copier l'application dans le répertoire de travail
-COPY ./lifestylesante /app/lifestylesante
+COPY . /app
 
-WORKDIR /app/lifestylesante
+WORKDIR /app
 
 # Installer les dépendances système requises pour dlib
 RUN apt-get update && apt-get install -y \

@@ -1,0 +1,54 @@
+{% extends 'base/base.html' %}
+{% block content %}
+
+<div class="col-12 ">
+    <div class="bg-light rounded h-100 p-4">
+        <h6 class="mb-4">liste des employés</h6>
+        {% if employes|length > 0 %}
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th scope="col">Matricule</th>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Prenom</th>
+                    <th scope="col">Genre</th>
+                    <th scope="col">nationalité</th>
+                    <th scope="col">Fonction</th>
+                    <th scope="col">Téléphone</th>
+                    <th scope="col">adresse</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for employe in employes %}
+                <tr>
+                    <th scope="row">{{employe.matricule_employe}}</th>
+                    <td>{{employe.nom}}</td>
+                    <td>{{employe.prenom}}</td>
+                    <td>{{employe.genre}}</td>
+                    <td>{{employe.nationalite}}</td>
+                    <td>{{employe.fonction}}</td>
+                    <td>{{employe.telephone}}</td>
+                    <td>{{employe.adresse}}</td>
+                    <td>{{employe.email}}</td>
+                    <td>
+                       <a href="{% url 'modifier_employe' employe.id %}">modifier</a>
+
+                       <a href="{% url 'supprimer_employe' employe.id %}">supprimer</a>
+
+                    </td>
+
+
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+            <p>Aucun employé</p>
+        {% endif %}    
+    </div>
+</div>
+
+{% endblock %}
