@@ -27,6 +27,7 @@ SECRET_KEY = 'django-insecure-$0+3i(hh5m@%3qb^rnds608a*(h&lpal1n7&smj@qes=65s=_a
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
+CSRF_TRUSTED_ORIGINS = ['http://146.59.195.139']
 
 
 # Application definition
@@ -122,11 +123,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static') 
+STATIC_URL = 'static/'
+STATIC_ROOT = "/static/"
 
-MEDIA_URL = '/medias/' 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'medias')
+MEDIA_URL = 'medias/' 
+MEDIA_ROOT = '/medias/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -138,5 +139,7 @@ LOGIN_URL = 'login/'
 LOGIN_REDIRECT = 'accueil'
 
 LOGOUT_REDIRECT = 'login_view'
+
+
 
 
