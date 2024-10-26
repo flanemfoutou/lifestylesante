@@ -1,3 +1,5 @@
+0 5 1 */2 *  /usr/bin/docker compose -f /home/lifestylesante/docker-compose.yml up certbot
+
 sudo docker run --rm --name certbot \
 -v "/etc/letsencrypt:/etc/letsencrypt" \
 -v "/var/www/certbot:/var/www/certbot" \
