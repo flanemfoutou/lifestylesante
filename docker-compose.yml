@@ -27,8 +27,8 @@ services:
     volumes:
       - static:/static
       - medias:/medias
-      - certbot_conf:/etc/letsencrypt  # Partage des certificats avec Certbot
-      - certbot_www:/var/www/certbot   # Dossier pour les challenges Let’s Encrypt
+      - ./certbot/conf:/etc/letsencrypt  # Partage des certificats avec Certbot
+      - ./certbot/www:/var/www/certbot   # Dossier pour les challenges Let’s Encrypt
     ports:
       - "80:80"
       - "443:443"
@@ -40,9 +40,10 @@ services:
   certbot:
     image: certbot/certbot
     volumes:
-      - certbot_conf:/etc/letsencrypt
-      - certbot_www:/var/www/certbot
-    entrypoint: /bin/sh -c 'trap exit TERM; while :; do certbot certonly --webroot --webroot-path=/var/www/certbot -d lifestylesante.org -d www.lifestylesante.org --non-interactive --agree-tos -m support@lifestylesante.org && sleep 12h; done'
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    command: certonly --webroot -w /var/www/certbot --force-renewal --email support@lifestylesante.org -d lifestylesante.org --agree-tos
+
     networks:
       - webnet
 
@@ -78,8 +79,6 @@ volumes:
   static:
   medias:
   db_data:
-  certbot_conf:
-  certbot_www:
 
 networks:
   webnet:
