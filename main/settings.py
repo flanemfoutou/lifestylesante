@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-$0+3i(hh5m@%3qb^rnds608a*(h&lpal1n7&smj@qes=65s=_a
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['http://146.59.195.139', 'https://lifestylesante.org', 'http://lifestylesante.org', 'https://www.lifestylesante.org', 'http://www.lifestylesante.org']
+ALLOWED_HOSTS = ['*']
 CSRF_TRUSTED_ORIGINS = ['http://146.59.195.139', 'https://lifestylesante.org', 'http://lifestylesante.org', 'https://www.lifestylesante.org', 'http://www.lifestylesante.org']
 
 
