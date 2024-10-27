@@ -1,9 +1,13 @@
 FROM python:3.9
 
+ENV PYTHONBUFFERD 1
+ENV PYTHONDONTWRITEBYTECODE 1
+
+RUN mkdir /app
+WORKDIR /app
+
 # Copier l'application dans le répertoire de travail
 COPY . /app
-
-WORKDIR /app
 
 # Installer les dépendances système requises pour dlib
 RUN apt-get update && apt-get install -y \
