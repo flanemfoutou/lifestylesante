@@ -3,10 +3,9 @@ FROM python:3.9
 ENV PYTHONBUFFERD 1
 ENV PYTHONDONTWRITEBYTECODE 1
 
-# Copier l'application dans le répertoire de travail
-COPY . /app
-
 WORKDIR /app
+
+COPY ./requirements.txt ./
 
 # Installer les dépendances système requises pour dlib
 RUN apt-get update && apt-get install -y \
@@ -22,6 +21,10 @@ RUN pip install -r requirements.txt
 # Copier et rendre exécutable le script entrypoint.sh
 COPY ./entrypoint.sh /
 RUN chmod +x /entrypoint.sh
+
+COPY . .
+
+EXPOSE 8000
 
 # Démarrer l'application
 ENTRYPOINT [ "sh", "/entrypoint.sh" ]
