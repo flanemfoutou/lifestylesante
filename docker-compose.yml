@@ -23,7 +23,7 @@ services:
     volumes:
       - /var/www/static/:/var/www/static/
       - /var/www/medias/:/var/www/medias/
-      - ./nginx/conf.d/:/etc/nginx/conf.d/
+      - ./nginx/conf.d:/etc/nginx/conf.d
     depends_on:
       - backend
 
