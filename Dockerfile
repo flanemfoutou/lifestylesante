@@ -1,30 +1,32 @@
-FROM python:3.9
+FROM python:3.9-slim-bullseye AS BASE
 
-ENV PYTHONBUFFERD 1
+ENV PYTHONUNBUFFERED 1
 ENV PYTHONDONTWRITEBYTECODE 1
 
 WORKDIR /app
 
 COPY ./requirements.txt ./
 
-# Installer les dépendances système requises pour dlib
 RUN apt-get update && apt-get install -y \
     cmake \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip install --upgrade pip
-
-RUN pip install -r requirements.txt
-
-
-# Copier et rendre exécutable le script entrypoint.sh
-COPY ./entrypoint.sh /
-RUN chmod +x /entrypoint.sh
+RUN apt-get update && \
+    apt-get install -y \
+        cmake \
+        build-essential \
+        gcc \
+        default-libmysqlclient-dev \
+        pkg-config \
+        curl && \
+        rm -rf /var/lib/apt/lists/* \
+    pip install --no-cache-dir -r requirements.txt && \
+    apt-get remove -y \
+      gcc \
+      pkg-config && \
+    rm -rf /var/lib/apt/lists/*
 
 COPY . .
 
 EXPOSE 8000
-
-# Démarrer l'application
-ENTRYPOINT [ "sh", "/entrypoint.sh" ]

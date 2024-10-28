@@ -1,11 +1,25 @@
-0 5 1 */2 *  /usr/bin/docker compose -f /home/lifestylesante/docker-compose.yml up certbot
+server {
+    listen 443 ssl;
+    server_name lifestylesante.org;
 
-sudo docker run --rm --name certbot \
--v "/etc/letsencrypt:/etc/letsencrypt" \
--v "/var/www/certbot:/var/www/certbot" \
-certbot/certbot certonly --webroot \
---webroot-path=/var/www/certbot \
---email support@lifestylesante.org \
---agree-tos \
---no-eff-email \
--d lifestylesante.org -d www.lifestylesante.org
+    ssl_certificate /etc/letsencrypt/live/lifestylesante.org/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/lifestylesante.org/privkey.pem;
+
+    access_log /var/log/nginx/access.log;
+    error_log /var/log/nginx/error.log;
+
+    location /static/ {
+        alias /var/www/static/;
+    }
+
+    location /medias/ {
+        alias /var/www/medias/;
+    }
+
+    location / {
+        proxy_pass http://web_app;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $host;
+        proxy_redirect off;
+    }
+}

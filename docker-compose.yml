@@ -1,54 +1,39 @@
 version: '3'
-
 services:
-  lifestylesante:
-    build: 
-      context: .
+  backend:
+    build: .
+    command: sh -c "python3 manage.py makemigrations && python3 manage.py migrate --noinput && python3 manage.py collectstatic --noinput && gunicorn --config gunicorn_config.py main.wsgi:application"
     restart: always
-    env_file:
-      - .env  # Contient les variables d'environnement pour Django et la base de données
+    expose:
+      - "8000"
     volumes:
-      - static_data:/opt/django/lifestylesante/static
-      - medias_data:/opt/django/lifestylesante/medias
-    ports:
-      - "8000:8000"
-    depends_on:
-      - db  # Attendre que le service MySQL démarre
-    environment:
-      - DB_HOST=db  # Adresse du service MySQL
-      - DB_PORT=3306  # Port MySQL
-      - DB_NAME=${MYSQL_DATABASE}  # Nom de la base de données
-      - DB_USER=${MYSQL_USER}  # Utilisateur MySQL
-      - DB_PASSWORD=${MYSQL_PASSWORD}  # Mot de passe MySQL
-    networks:
-      - webnet
+      - ./:/app
+      - /var/www/static/:/var/www/static/
+      - /var/www/medias/:/var/www/medias/
+      - /var/certbot/conf:/etc/letsencrypt/:ro
+    env_file:
+      - .env
 
   nginx:
-    build: ./nginx
-    restart: always
-    volumes:
-      - static_data:/opt/django/lifestylesante/static
-      - medias_data:/opt/django/lifestylesante/medias
-      - ./certbot/conf:/etc/letsencrypt  # Partage des certificats avec Certbot
-      - ./certbot/www:/var/www/certbot   # Dossier pour les challenges Let’s Encrypt
+    image: nginx:alpine
+    restart: unless-stopped
     ports:
       - "80:80"
       - "443:443"
+    volumes:
+      - /var/www/static/:/var/www/static/
+      - /var/www/medias/:/var/www/medias/
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
     depends_on:
-      - lifestylesante
-    networks:
-      - webnet
+      - backend
 
   certbot:
-    image: certbot/certbot
-    restart: always
+    image: certbot/certbot:latest
     volumes:
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
-    command: certonly --webroot -w /var/www/certbot --force-renewal --email support@lifestylesante.org -d lifestylesante.org --agree-tos
-
-    networks:
-      - webnet
+      - /var/certbot/conf:/etc/letsencrypt/:rw
+      - /var/certbot/www/:/var/www/certbot/:rw
+    depends_on:
+      - nginx
 
   db:
     image: mysql:8.0  
@@ -61,9 +46,7 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - db_data:/var/lib/mysql  # Stocker les données dans un volume persistant
-    networks:
-      - webnet
+      - /var/lib/mysql:/var/lib/mysql  # Stocker les données dans un volume persistant
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -75,13 +58,3 @@ services:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     depends_on:
       - db  
-    networks:
-      - webnet
-
-volumes:
-  static_data:
-  medias_data:
-  db_data:
-
-networks:
-  webnet:
