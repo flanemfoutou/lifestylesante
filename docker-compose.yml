@@ -25,7 +25,10 @@ services:
     volumes:
       - /var/www/static/:/var/www/static/
       - /var/www/medias/:/var/www/medias/
+      - /var/certbot/conf:/etc/letsencrypt/:rw
+      - /var/certbot/www/:/var/www/certbot/:rw 
       - ./nginx/conf.d/:/etc/nginx/conf.d/
+
     depends_on:
       - backend
     networks:
