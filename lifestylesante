@@ -1,0 +1,48 @@
+server {
+    listen 80;
+    server_name lifestylesante.org www.lifestylesante.org;
+
+    # Redirige www vers sans-www
+    if ($host = www.lifestylesante.org) {
+        return 301 http://lifestylesante.org$request_uri;
+    }
+
+    # Redirige vers HTTPS
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    server_name lifestylesante.org www.lifestylesante.org;
+
+    # Emplacement des certificats SSL
+    ssl_certificate /etc/letsencrypt/live/lifestylesante.org/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/lifestylesante.org/privkey.pem;
+
+    ssl_protocols TLSv1.2 TLSv1.3;
+
+    # Paramètres de sécurité SSL (ajustez si nécessaire)
+    ssl_prefer_server_ciphers on;
+
+    # Emplacement des fichiers statiques (CSS, JS, images)
+    location /static/ {
+        alias /home/debian/lifestylesante/static;
+    }
+
+    location /medias/ {
+        alias /home/debian/lifestylesante/medias;
+    }
+
+    # Proxy vers Gunicorn
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # Paramètres pour éviter les attaques DoS et améliorer les performances
+    client_max_body_size 10M;
+    keepalive_timeout 65;
+}
