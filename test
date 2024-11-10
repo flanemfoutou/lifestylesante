@@ -1,31 +1,52 @@
-server {
-    listen 443 ssl;
-    server_name lifestylesante.org;
+CREATE DATABASE lifestylesante_db;
+CREATE USER lifestylesante_user WITH PASSWORD 'lifestyle@2024';
+GRANT ALL PRIVILEGES ON DATABASE lifestylesante_db TO lifestylesante_user;
 
-    ssl_certificate /etc/letsencrypt/live/lifestylesante.org/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/lifestylesante.org/privkey.pem;
+SELECT grantee, privilege_type FROM information_schema.role_table_grants WHERE table_schema = 'public' AND grantee = 'lifestylesante_user';
 
-    access_log /var/log/nginx/access.log;
-    error_log /var/log/nginx/error.log;
+GRANT USAGE ON SCHEMA public TO lifestylesante_user;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO lifestylesante_user;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO lifestylesante_user;
 
-    location /static/ {
-        alias /var/www/static/;
-    }
 
-    location /medias/ {
-        alias /var/www/medias/;
-    }
+CREATE USER user_lifestylesante WITH ENCRYPTED PASSWORD 'lifestylesante@2024';
+GRANT ALL PRIVILEGES ON DATABASE lifestylesante_db TO user_lifestylesante;
+GRANT USAGE ON SCHEMA public TO user_lifestylesante;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO user_lifestylesante;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO user_lifestylesante;
 
-    location / {
-        proxy_pass http://web_app;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header Host $host;
-        proxy_redirect off;
+SELECT grantee, privilege_type FROM information_schema.role_table_grants WHERE table_schema = 'public' AND grantee = 'user_lifestylesante';
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'lifestylesante_db',
+        'USER': 'lifestylesante_user',
+        'PASSWORD': 'lifestyle@2024',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
 
-docker-compose run --rm certbot certonly --webroot --webroot-path=/var/www/certbot --email support@lifestylesante.org --agree-tos --no-eff-email -d lifestylesante.org
 
 
-curl http://146.59.195.139/.well-known/acme-challenge/testfile
+ALTER ROLE debian SET client_encoding TO 'utf8';
+ALTER ROLE debian SET default_transaction_isolation TO 'read committed';
+ALTER ROLE debian SET timezone TO 'Africa/Brazzaville';
+
+GRANT ALL PRIVILEGES ON DATABASE lifestylesante_db TO debian;
+
+
+-- Supprimer une base de donnee
+
+-- Déconnecter les utilisateurs de la base de données
+
+REVOKE CONNECT ON DATABASE lifestylesante_db FROM public;
+SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'lifestylesante_db';
+
+-- Supprimer la base de données
+DROP DATABASE lifestylesante_db;
+
+-- Creer une nouvelle base de donnee
+CREATE DATABASE lifestylesante_db;

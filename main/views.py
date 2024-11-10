@@ -13,8 +13,18 @@ import tempfile
 import os
 from django.conf import settings 
 from profiles.models import Employe, Connexion
+import base64
+import os
+import uuid
+from .utils import get_cached_encoded_faces
+from django.conf import settings
+from django.contrib.auth import login
+from django.core.cache import cache
+import face_recognition as fr
+import numpy as np
+from django.core.exceptions import ObjectDoesNotExist
 
- 
+
 
 def login_view(request):
     return render(request, 'registration/login.html', {})
@@ -25,8 +35,24 @@ def logout_view(request):
 
 @login_required
 def home_view(request):
-    employe = Employe.objects.get(user=request.user)
+    try:
+        employe = Employe.objects.get(user=request.user)
+    except ObjectDoesNotExist:
+        # Utilisation d'ObjectDoesNotExist pour capturer toutes les exceptions de type 'DoesNotExist'
+        return redirect('login')  # Assurez-vous que cette vue existe bien
+
     return render(request, 'main.html', {'employe': employe})
+
+# Tolerance level for more accurate face matching
+FACE_MATCH_THRESHOLD = 0.35  # Réduit pour plus de précision
+
+def decode_base64_image(photo):
+    try:
+        _, str_img = photo.split(';base64,')
+        return base64.b64decode(str_img)
+    except Exception as e:
+        print(f"Error decoding image: {e}")
+        return None
 
 def find_user_view(request):
     if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
@@ -34,61 +60,51 @@ def find_user_view(request):
         if not photo:
             return JsonResponse({'success': False, 'error': 'No photo provided'})
 
+        decoded_file = decode_base64_image(photo)
+        if decoded_file is None:
+            return JsonResponse({'success': False, 'error': 'Invalid image data'})
+
+        photo_filename = f"{uuid.uuid4()}.png"
+        logs_folder = os.path.join(settings.MEDIA_ROOT, 'logs')
+        os.makedirs(logs_folder, exist_ok=True)
+        photo_path = os.path.join(logs_folder, photo_filename)
+
         try:
-            # Décodage de la photo base64
-            _, str_img = photo.split(';base64,')
-            decoded_file = base64.b64decode(str_img)
-
-            # Définir le chemin vers le dossier logs dans le dossier medias
-            logs_folder = os.path.join(settings.MEDIA_ROOT, 'logs')
-            if not os.path.exists(logs_folder):
-                os.makedirs(logs_folder)
-
-            # Sauvegarde de la photo temporairement dans le dossier medias/logs
-            photo_path = os.path.join(logs_folder, 'temp_photo.png')
             with open(photo_path, 'wb') as photo_file:
                 photo_file.write(decoded_file)
 
-            # Classification faciale
+            # Vérifiez le contenu du cache
+            print("Fetching encoded faces from cache...")
+            faces = get_cached_encoded_faces()
+            print(f"Encoded faces: {faces}")
+
+            # Classification de l'image
             res = classify_face(photo_path)
+            print(f"Classification result: {res}")
 
-            # Afficher le résultat de la classification pour le débogage
-            print(f"Résultat de la classification : {res}")
-
-            if res:
-                user_exists = User.objects.filter(username=res).exists()
-                if user_exists:
+            if res and res != "Unknown":
+                try:
                     user = User.objects.get(username=res)
-                    employe = Employe.objects.get(user=user)
                     login(request, user)
-
-                    # Suppression de la photo après connexion réussie
-                    if os.path.exists(photo_path):
-                        os.remove(photo_path)
-
                     return JsonResponse({'success': True})
-                else:
-                    # Suppression de la photo en cas d'échec
-                    if os.path.exists(photo_path):
-                        os.remove(photo_path)
+                except User.DoesNotExist:
                     return JsonResponse({'success': False, 'error': 'User not found'})
-
-            # Suppression de la photo en cas de non reconnaissance faciale
-            if os.path.exists(photo_path):
-                os.remove(photo_path)
 
             return JsonResponse({'success': False, 'error': 'Face not recognized'})
 
         except Exception as e:
-            # Suppression de la photo en cas d'exception
-            if os.path.exists(photo_path):
-                os.remove(photo_path)
+            print(f"Error during face classification: {e}")
             return JsonResponse({'success': False, 'error': str(e)})
+
+        finally:
+            # Essayez de commenter cette ligne pour voir si cela affecte le comportement
+             if os.path.exists(photo_path):
+                 os.remove(photo_path)
 
     return HttpResponseBadRequest('Invalid request')
 
 
-class DasboardView(View):
+class DashboardView(View):
     def get(self, request):
         return render(request, "registration/connexion.html")
     
@@ -98,14 +114,19 @@ class DasboardView(View):
         user_auth = authenticate(request, username=data.get('username'),
                                  password=data.get('password'))
         
-        if not  user_auth:
-            messages.error(request,"Vos informations de connexions sont érronnées...")
+        if not user_auth:
+            messages.error(request, "Vos informations de connexion sont erronées...")
+            return self.get(request)
+        
+        # Vérification que l'utilisateur est un super utilisateur
+        if not user_auth.is_superuser:
+            messages.error(request, "Vous n'avez pas la permission d'accéder à cette interface.")
             return self.get(request)
         
         login(request, user_auth)
         
         return redirect("dashboard")
- 
+    
         
 @method_decorator(login_required, name='dispatch')
 class DeconnexionPageView(View):

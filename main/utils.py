@@ -1,85 +1,83 @@
 import face_recognition as fr
 import numpy as np
 from profiles.models import Employe
+import json
+import os
+from django.core.cache import cache
 
+cache.clear()
+CACHE_PATH = "encoded_faces.json"
+
+def save_encoded_faces(encoded_faces):
+    with open(CACHE_PATH, 'w') as f:
+        json.dump(encoded_faces, f)
+
+def load_encoded_faces():
+    if os.path.exists(CACHE_PATH):
+        with open(CACHE_PATH, 'r') as f:
+            return json.load(f)
+    return None
 
 def get_encoded_faces():
-    """
-    This function loads all user profile images and encodes their faces
-    """
-    # Retrieve all employee profiles from the database
-    qs = Employe.objects.all()
+    encoded = load_encoded_faces()
+    if encoded is not None:
+        return encoded
 
-    # Create a dictionary to hold the encoded face for each employee
     encoded = {}
-
-    for p in qs:
+    for employe in Employe.objects.all():
         try:
-            # Load the user's profile image
-            face = fr.load_image_file(p.photo.path)
-
-            # Encode the face (if detected)
+            face = fr.load_image_file(employe.photo.path)
             face_encodings = fr.face_encodings(face)
-
-            if len(face_encodings) > 0:
-                encoding = face_encodings[0]
-                # Add the user's encoded face to the dictionary
-                encoded[p.user.username] = encoding
+            if face_encodings:
+                encoded[employe.user.username] = face_encodings[0].tolist()
             else:
-                print(f"No face found in the image for {p.user.username}")
-
+                print(f"No face found for {employe.user.username}")
         except Exception as e:
-            # Log any error that occurs while encoding the image
-            print(f"Error processing {p.user.username}'s image: {e}")
+            print(f"Error processing {employe.user.username}'s image: {e}")
 
-    # Return the dictionary of encoded faces
+    save_encoded_faces(encoded)
     return encoded
 
-def classify_face(img):
-    """
-    This function takes an image as input and returns the name of the face it contains
-    """
+def get_cached_encoded_faces():
+    encoded_faces = cache.get("encoded_faces")
+    if encoded_faces is None:
+        encoded_faces = {}
+        for employe in Employe.objects.all():
+            try:
+                face_image = fr.load_image_file(employe.photo.path)
+                encodings = fr.face_encodings(face_image)
+                if encodings:
+                    encoded_faces[employe.user.username] = encodings[0].tolist()
+            except Exception as e:
+                print(f"Error encoding {employe.user.username}: {e}")
+        cache.set("encoded_faces", encoded_faces, timeout=86400)
+    return {name: np.array(enc) for name, enc in encoded_faces.items()}
+
+FACE_MATCH_THRESHOLD = 0.45  # Seuil plus strict pour réduire les erreurs
+
+def classify_face(img_path):
+    faces = get_cached_encoded_faces()
+    faces_encoded = list(faces.values())
+    known_face_names = list(faces.keys())
+
     try:
-        # Load all the known faces and their encodings
-        faces = get_encoded_faces()
-        faces_encoded = list(faces.values())
-        known_face_names = list(faces.keys())
-
-        # Load the input image
-        img = fr.load_image_file(img)
-
-        # Find the locations of all faces in the input image
+        img = fr.load_image_file(img_path)
         face_locations = fr.face_locations(img)
 
-        # Encode the faces in the input image
-        unknown_face_encodings = fr.face_encodings(img, face_locations)
-
-        # Initialize a list to hold identified face names
-        face_names = []
-
-        for face_encoding in unknown_face_encodings:
-            # Compare the encoding of the current face to the encodings of all known faces
-            matches = fr.compare_faces(faces_encoded, face_encoding)
-
-            # Find the known face with the closest encoding to the current face
-            face_distances = fr.face_distance(faces_encoded, face_encoding)
-            best_match_index = np.argmin(face_distances)
-
-            # If the closest known face is a match for the current face, label the face with the known name
-            if matches[best_match_index]:
-                name = known_face_names[best_match_index]
-            else:
-                name = "Unknown"
-
-            face_names.append(name)
-
-        # Return the name of the first face in the input image (or None if no faces found)
-        if face_names:
-            return face_names[0]
-        else:
+        if len(face_locations) != 1:
+            print("Either no face or multiple faces detected, rejecting recognition.")
             return "Unknown"
 
+        unknown_face_encodings = fr.face_encodings(img, face_locations)
+
+        for face_encoding in unknown_face_encodings:
+            distances = fr.face_distance(faces_encoded, face_encoding)
+            best_match_index = np.argmin(distances)
+            if distances[best_match_index] < FACE_MATCH_THRESHOLD:
+                return known_face_names[best_match_index]
+            else:
+                print("No match found.")
+        return "Unknown"
     except Exception as e:
-        # Handle any unexpected errors
         print(f"Error during face classification: {e}")
-        return False
+        return "Unknown"

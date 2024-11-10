@@ -27,6 +27,13 @@ reloadBtn.addEventListener('click', () => {
     window.location.reload();
 });
 
+// Function to validate the captured image
+const validateImage = (base64data) => {
+    // Add your image validation logic here
+    // Example: check if the image is not empty or meets certain dimensions
+    return base64data.length > 0; // Simple check, customize as needed
+};
+
 if (navigator.mediaDevices.getUserMedia) {
     navigator.mediaDevices.getUserMedia({
         video: {
@@ -39,7 +46,7 @@ if (navigator.mediaDevices.getUserMedia) {
         video.srcObject = stream;
         video.play();
 
-        const {height, width} = stream.getTracks()[0].getSettings();
+        const { height, width } = stream.getTracks()[0].getSettings();
         console.log(`Camera resolution: ${width}x${height}`);
 
         captureBtn.addEventListener('click', e => {
@@ -68,26 +75,31 @@ if (navigator.mediaDevices.getUserMedia) {
                         const base64data = reader.result;
                         console.log(base64data);
 
-                        const fd = new FormData();
-                        fd.append('csrfmiddlewaretoken', csrftoken);
-                        fd.append('photo', base64data);
+                        if (validateImage(base64data)) {
+                            const fd = new FormData();
+                            fd.append('csrfmiddlewaretoken', csrftoken);
+                            fd.append('photo', base64data);
 
-                        // AJAX call to send the image to the server
-                        $.ajax({
-                            type: 'POST',
-                            url: '/classify/',
-                            enctype: 'multipart/form-data',
-                            data: fd,
-                            processData: false,
-                            contentType: false,
-                            success: (resp) => {
-                                console.log(resp);
-                                window.location.href = window.location.origin;
-                            },
-                            error: (err) => {
-                                console.log(err);
-                            }
-                        });
+                            // AJAX call to send the image to the server
+                            $.ajax({
+                                type: 'POST',
+                                url: '/classify/',
+                                enctype: 'multipart/form-data',
+                                data: fd,
+                                processData: false,
+                                contentType: false,
+                                success: (resp) => {
+                                    console.log(resp);
+                                    window.location.href = window.location.origin;
+                                },
+                                error: (err) => {
+                                    console.log(err);
+                                    alert("Erreur de connexion. Veuillez réessayer."); // Message d'erreur pour l'utilisateur
+                                }
+                            });
+                        } else {
+                            alert("L'image capturée n'est pas valide. Veuillez réessayer.");
+                        }
                     };
                 }).catch(error => {
                     console.log('takePhoto() error:', error);

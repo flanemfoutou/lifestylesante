@@ -8,7 +8,7 @@ from .views import (
     login_view,
     logout_view,
     home_view,
-    find_user_view,DasboardView,DeconnexionPageView
+    find_user_view,DashboardView,DeconnexionPageView
 )
 
 urlpatterns = [
@@ -18,7 +18,7 @@ urlpatterns = [
     path('login/', login_view, name='login'),
     path('logout/', logout_view, name='logout'),
     path('classify/', find_user_view, name='classify'),
-    path("clssante/", DasboardView.as_view(), name="connexion"),
+    path("clssante/", DashboardView.as_view(), name="connexion"),
     path("déconnexion/", DeconnexionPageView.as_view(), name="deconnexion"),
 
 

@@ -26,6 +26,7 @@ SECRET_KEY = 'django-insecure-$0+3i(hh5m@%3qb^rnds608a*(h&lpal1n7&smj@qes=65s=_a
 DEBUG = False
 
 ALLOWED_HOSTS = ['*']
+CSRF_TRUSTED_ORIGINS = ['https://lifestylesante.org', 'http://lifestylesante.org', 'https://www.lifestylesante.org', 'http://www.lifestylesante.org']
 
 
 # Application definition
@@ -75,12 +76,25 @@ WSGI_APPLICATION = 'main.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'lifestylesante_db',
+            'USER': 'debian',
+            'PASSWORD': 'db@2024',
+            'HOST': 'localhost',
+            'PORT': '5432',
+        }
+    }
+
 
 
 # Password validation
@@ -121,9 +135,11 @@ STATIC_URL = '/static/'
 MEDIA_URL = '/medias/'
 
 MEDIA_ROOT = BASE_DIR / 'medias'
-STATIC_ROOT = BASE_DIR / 'static'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-STATICFILES_DIRS = [BASE_DIR / 'static']
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

@@ -1,47 +1,84 @@
 {% extends 'base/base1.html' %}
 {% load static %}
 {% block content %}
-<a href="{% url 'logout' %}" class="btn btn-primary d-block text-right" style="font-weight: bold;">Déconnecter</a>
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-12 col-md-8 col-lg-6">
-                <div class="card">
-                    <div class="card-img-top" style="background-image: url({% static 'accueil/img/about/2.png' %}); background-size: cover; padding: 50px;">
-                        <img src="{{ employe.photo.url }}" alt="{{ employe.nom }}" class="img-fluid rounded-circle mx-auto d-block" style="height: 350px; width: auto;  border: 5px solid #007bff; /* Add a blue border for design */">
-                    </div>
+<a href="{% url 'logout' %}" class="btn btn-outline-primary d-block text-right mb-3" style="font-weight: bold; border-radius: 20px; padding: 8px 16px; font-size: 14px;">
+    Déconnecter
+</a>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="card">
+                <div class="card-header text-center bg-transparent border-0">
+                    <img src="{{ employe.photo.url }}" alt="{{ employe.nom }}" 
+                         class="img-fluid rounded-circle mx-auto" 
+                         style="height: 180px; width: 180px; border: 5px solid #007bff;">
+                </div>
 
-                    <div class="card-body text-center">
-                        <h5 class="card-title">{{ employe.nom }} {{ employe.prenom }}</h5>
-                        <p class="card-text">{{ employe.fonction }}</p>
-                    </div>
+                <div class="card-body text-center">
+                    <h5 class="card-title">{{ employe.nom }} {{ employe.prenom }}</h5>
+                    <p class="card-text">{{ employe.fonction }}</p>
+                </div>
 
-                    <ul class="list-group list-group-flush text-center">
-                         <li class="list-group-item">Genre : {{ employe.genre }}</li>
-                         <li class="list-group-item">Nationalité : {{ employe.nationalite }}</li>
-                        <li class="list-group-item">Téléphone : {{ employe.telephone }}</li>
-                        <li class="list-group-item">Email : {{ employe.email }}</li>
-                        <li class="list-group-item">Adresse : {{ employe.adresse }}</li>
-                        <li class="list-group-item">Matricule : {{ employe.matricule_employe }}</li>
-                    </ul>
+                <ul class="list-group list-group-flush text-center">
+                    <li class="list-group-item">Genre : {{ employe.genre }}</li>
+                    <li class="list-group-item">Nationalité : {{ employe.nationalite }}</li>
+                    <li class="list-group-item">Téléphone : {{ employe.telephone }}</li>
+                    <li class="list-group-item">Email : {{ employe.email }}</li>
+                    <li class="list-group-item">Adresse : {{ employe.adresse }}</li>
+                    <li class="list-group-item">Matricule : {{ employe.matricule_employe }}</li>
+                </ul>
 
-                    <div class="card-body text-center">
-                        <a href="{% url 'marquer_arrivee' employe.id %}" class="card-link" style="color: #00BFFF;">Arrivée</a>
-                        <a href="{% url 'marquer_depart' employe.id %}" class="card-link" style="color: #00BFFF;">Départ</a>
-                    </div>
+                <div class="card-body text-center">
+                    <a href="{% url 'marquer_arrivee' employe.id %}" class="btn btn-success" style="margin: 5px; padding: 10px 20px;">
+                        <i class="bi bi-arrow-up-circle"></i> Arrivée
+                    </a>
+                    <a href="{% url 'marquer_depart' employe.id %}" class="btn btn-danger" style="margin: 5px; padding: 10px 20px;">
+                        <i class="bi bi-arrow-down-circle"></i> Départ
+                    </a>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <style>
-        /* Media Queries pour une meilleure responsivité */
-        @media (max-width: 768px) {
-            .card-img-top img {
-                height: 200px; /* Ajuste la hauteur de l'image sur les petits écrans */
-            }
-            .card-body, .list-group-item {
-                font-size: 14px; /* Réduit la taille du texte sur les petits écrans */
-            }
+<style>
+    /* Page background styling */
+    body {
+        background: linear-gradient(135deg, #e3f2fd, #ffffff);
+    }
+
+    /* Styling for the card */
+    .card {
+        border-radius: 20px;
+        transition: transform 0.3s, box-shadow 0.3s;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        background-color: #ffffff;
+    }
+
+    .card:hover {
+        transform: scale(1.02);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Styling for buttons */
+    .btn {
+        border-radius: 30px;
+        transition: background-color 0.3s, transform 0.3s;
+    }
+
+    .btn:hover {
+        transform: translateY(-3px);
+    }
+
+    /* Responsive styling */
+    @media (max-width: 768px) {
+        .card-header img {
+            height: 150px;
+            width: 150px;
         }
-    </style>
+        .card-body, .list-group-item {
+            font-size: 14px;
+        }
+    }
+</style>
 {% endblock %}

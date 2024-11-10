@@ -8,9 +8,11 @@ import csv
 from reportlab.pdfgen import canvas
 from django.http import HttpResponse
 from django.utils import timezone
+from datetime import datetime, timedelta
 from django.template.loader import render_to_string
 from .models import Employe,MarquerArrivee,MarquerDepart
 from .forms import EmployeForm,MarquerArriveeForm,MarquerDepartForm,UserRegistrationForm
+
 
 
 
@@ -65,9 +67,15 @@ def modifier_employe(request, pk):
 
 def supprimer_employe(request, employe_id):
     employe = get_object_or_404(Employe, id=employe_id)
-    employe.delete()
-    return redirect('liste_employe')
     
+    # Vérifie si la demande est une confirmation de suppression
+    if request.method == "POST":
+        employe.delete()
+        return redirect('liste_employe')
+    
+    # Affiche la page de confirmation si non confirmé
+    return render(request, 'confirmer_suppression.html', {'employe': employe})
+  
 @login_required
 def marquer_arrivee(request, employe_id):
     employe = get_object_or_404(Employe, id=employe_id)
@@ -129,19 +137,7 @@ def liste_arrivees_departs(request):
     departs = MarquerDepart.objects.all()
     return render(request, 'liste_presence.html', {'arrivees': arrivees, 'departs': departs})
 
-# Vue pour afficher par mois
-def liste_par_mois(request, mois, annee):
-    arrivees = MarquerArrivee.objects.filter(date_arrivee__month=mois, date_arrivee__year=annee)
-    departs = MarquerDepart.objects.filter(date_depart__month=mois, date_depart__year=annee)
-    return render(request, 'liste_presence.html', {'arrivees': arrivees, 'departs': departs})
 
-# Vue pour afficher par semaine
-def liste_par_semaine(request, semaine, annee):
-    debut_semaine = timezone.now() + timedelta(weeks=semaine - 1)
-    fin_semaine = debut_semaine + timedelta(days=7)
-    arrivees = MarquerArrivee.objects.filter(date_arrivee__range=[debut_semaine, fin_semaine])
-    departs = MarquerDepart.objects.filter(date_depart__range=[debut_semaine, fin_semaine])
-    return render(request, 'liste_presence.html', {'arrivees': arrivees, 'departs': departs})
 
 # Export CSV
 def export_arrivees_csv(request):

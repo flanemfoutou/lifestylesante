@@ -13,14 +13,21 @@ class EmployeForm(forms.ModelForm):
 class MarquerArriveeForm(forms.ModelForm):
     class Meta:
         model = MarquerArrivee
-        fields = ['arrivee']
-    
+        fields = ['arrivee', 'latitude', 'longitude']
+        widgets = {
+            'latitude': forms.HiddenInput(),
+            'longitude': forms.HiddenInput(),
+        }
     
 class MarquerDepartForm(forms.ModelForm):
-    class Meta:
+     class Meta:
         model = MarquerDepart
-        fields = ['depart']
-
+        fields = ['depart','latitude', 'longitude']
+        widgets = {
+            'latitude': forms.HiddenInput(),
+            'longitude': forms.HiddenInput(),
+        }
+   
 
 class UserRegistrationForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput, label="Mot de passe")

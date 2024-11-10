@@ -4,15 +4,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
-            <div class="bg-light rounded h-100 p-4">
-                <h6 class="mb-4">Filtrer les présences</h6>
-                <div class="mb-3 d-flex justify-content-between flex-wrap">
-                    <!-- Liens de filtrage -->
-                    <a href="{% url 'liste_arrivees_departs' %}" class="btn btn-secondary btn-sm mb-2 me-2 btn-block">Afficher Tout</a>
-                    <a href="{% url 'liste_par_mois' mois=10 annee=2024 %}" class="btn btn-info btn-sm mb-2 me-2 btn-block">Afficher par Mois</a>
-                    <a href="{% url 'liste_par_semaine' semaine=1 annee=2024 %}" class="btn btn-warning btn-sm mb-2 me-2 btn-block">Afficher par Semaine</a>
-                </div>
-                
+            <div class="bg-light rounded h-100 p-4">                
                 <!-- Liste des arrivées -->
                 <h6 class="mb-4">Liste de présence des arrivées</h6>
                 <div class="mb-3 d-flex justify-content-between flex-wrap">

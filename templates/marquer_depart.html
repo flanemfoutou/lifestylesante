@@ -22,3 +22,15 @@
     </div>
 </div><br><br><br><br><br><br><br><br><br><br>
 {% endblock %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                document.getElementById("id_latitude").value = position.coords.latitude;
+                document.getElementById("id_longitude").value = position.coords.longitude;
+            });
+        } else {
+            alert("La géolocalisation n'est pas supportée par ce navigateur.");
+        }
+    });
+</script>
