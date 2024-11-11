@@ -1,9 +1,39 @@
 {% extends 'base/base1.html' %}
 {% load static %}
 {% block content %}
-<a href="{% url 'login' %}" class="btn btn-primary d-block text-right" style="font-weight: bold;">connexion</a>
+<a href="{% url 'login' %}" class="btn btn-primary d-block text-right" style="font-weight: bold; background-color: #28a745; border-color: #28a745; color: white;">connexion</a>
 
 <style>
+    /* Appliquer la couleur verte pour les éléments de texte */
+    body, .slider_text h3, .service_area .single_service h3, .welcome_docmed_info h2, .welcome_docmed_info h3, .business_info h3 {
+        color: #28a745; /* Vert */
+    }
+    .service_area .single_service p, .welcome_docmed_info p {
+        color: #333333; /* Texte gris pour une meilleure lisibilité */
+    }
+
+    /* Liens verts */
+    a, .nav-link {
+        color: #28a745; /* Vert pour les liens */
+    }
+
+    a:hover, .nav-link:hover {
+        color: #155724; /* Vert foncé pour le survol */
+    }
+
+    /* Bouton de connexion personnalisé */
+    .btn-primary {
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+
+    /* Ajustements pour la mise en forme des images et autres éléments */
+    img {
+        max-width: 100%;
+        height: auto;
+    }
+
+    /* Responsive Design pour écrans moyens et petits */
     @media (max-width: 768px) {
         /* Ajustements pour les écrans moyens */
         .slider_text h3 {
@@ -25,11 +55,6 @@
         }
         /* Autres ajustements */
     }
-
-    img {
-        max-width: 100%;
-        height: auto;
-    }
 </style>
 
 <!-- slider_area_start -->
@@ -39,7 +64,7 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12">
-                        <div class="slider_text ">
+                        <div class="slider_text">
                             <h3><span>Santé pour toute la famille</span><br></h3>
                             <p>Dans le secteur de la santé, l'excellence du service est la capacité de l'hôpital à être constant(e).</p>
                         </div>
@@ -53,7 +78,7 @@
 <!-- slider_area_end -->
 
 <!-- service_area_start -->
-<div class="service_area">
+<div class="service_area" style="background-color: #28a745;">
     <div class="container-fluid p-0">
         <div class="row no-gutters">
             <div class="col-xl-4 col-md-4 col-sm-12">
@@ -61,14 +86,16 @@
                     <div class="icon">
                         <i class="flaticon-electrocardiogram"></i>
                     </div>
-                    <h3>L'hospitalité</h3>
-                    <p>L'hospitalité envers les patients est primordiale pour leur bien-être durant leur séjour à l'hôpital...</p>
+                    <h3 style="color: white;">L'hospitalité</h3>
+                    <p style="color: white;">L'hospitalité envers les patients est primordiale pour leur bien-être durant leur séjour à l'hôpital...</p>
                 </div>
             </div>
             <!-- Autres services -->
         </div>
     </div>
 </div>
+
+
 <!-- service_area_end -->
 
 <!-- welcome_docmed_area_start -->
@@ -87,7 +114,7 @@
             </div>
             <div class="col-xl-6 col-lg-6">
                 <div class="welcome_docmed_info">
-                    <h2 style="color: #00BFFF; font-weight: bold;">Bienvenue à Life Style Santé</h2>
+                    <h2 style="color: #28a745; font-weight: bold;">Bienvenue à Life Style Santé</h2>
                     <h3>Les meilleurs soins pour votre bonne santé".<br></h3>
                     <p>Nous nous engageons à fournir les meilleurs soins pour votre bonne santé...</p>
                     <ul>
@@ -136,15 +163,15 @@
                     <ul class="nav" id="myTab" role="tablist">
                         <li class="nav-item">
                             <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home"
-                               aria-selected="true">Excellent Services</a>
+                               aria-selected="true" style="color: #28a745;">Excellent Services</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile"
-                               aria-selected="false">Médecins compétents</a>
+                               aria-selected="false" style="color: #28a745;">Médecins compétents</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact"
-                               aria-selected="false">Services d'urgence</a>
+                               aria-selected="false" style="color: #28a745;">Services d'urgence</a>
                         </li>
                     </ul>
                 </div>
@@ -195,10 +222,10 @@
                         <div class="col-xl-6 col-md-6 col-sm-12">
                             <div class="business_info">
                                 <div class="icon">
-                                    <i class="flaticon-emergency-call"></i>
+                                    <i class="flaticon-heartbeat"></i>
                                 </div>
-                                <h3>Services d'urgence disponibles 24/7</h3>
-                                <p>Notre service d'urgence est à votre disposition 24 heures sur 24, 7 jours sur 7, pour répondre à vos besoins...</p>
+                                <h3>Services d'urgence 24/7</h3>
+                                <p>Nos services d'urgence sont disponibles 24 heures sur 24, 7 jours sur 7, pour répondre à vos besoins médicaux urgents.</p>
                             </div>
                         </div>
                         <div class="col-xl-6 col-md-6 col-sm-12">

@@ -62,6 +62,9 @@ if (navigator.mediaDevices.getUserMedia) {
                 imageCapture.takePhoto().then(blob => {
                     console.log("Took photo:", blob);
 
+                    // Applique la bordure verte au rond de la balise vidéo
+                    video.classList.add('border-green');
+
                     // Create an image element with the captured photo
                     const img = new Image(width, height);
                     img.src = URL.createObjectURL(blob);

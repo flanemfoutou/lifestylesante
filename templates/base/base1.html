@@ -9,12 +9,11 @@
     <title>Life Style Santé</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!-- <link rel="manifest" href="site.webmanifest"> -->
+    
+    <!-- Favicons -->
     <link rel="shortcut icon" type="image/x-icon" href="{% static 'accueil/img/favicon.png' %}">
-    <!-- Place favicon.ico in the root directory -->
-
-    <!-- CSS here -->
+    
+    <!-- CSS -->
     <link rel="stylesheet" href="{% static 'accueil/css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'accueil/css/owl.carousel.min.css' %}">
     <link rel="stylesheet" href="{% static 'accueil/css/magnific-popup.css' %}">
@@ -27,33 +26,66 @@
     <link rel="stylesheet" href="{% static 'accueil/css/slicknav.css' %}">
     <link rel="stylesheet" href="{% static 'accueil/css/style.css' %}">
 
+    <style>
+        /* Application de la couleur green pour les éléments principaux */
+        body {
+            color: green;
+        }
+
+        /* En-tête */
+        .header-area, .footer, .main-header-area {
+            background-color: green;
+            color: white;
+        }
+
+        /* Liens et logos */
+        .header-area a, .social_media_links a, .short_contact_list a {
+            color: white;
+        }
+        .header-area a:hover {
+            color: lightgreen;
+        }
+
+        /* Bordures, boutons et icônes */
+        .header-top_area, .copy-right_text, .btn-custom, .footer_border, .footer {
+            border-color: green;
+        }
+
+        .btn-primary, .btn-info {
+            background-color: green;
+            border-color: green;
+            color: white;
+        }
+        .btn-primary:hover, .btn-info:hover {
+            background-color: darkgreen;
+        }
+
+        /* Autres éléments */
+        h3, h4, h5, h6, .text-center, p, .text-primary {
+            color: green;
+        }
+    </style>
 </head>
 
 <body>
 
     <header>
-        <div class="header-area ">
+        <div class="header-area">
             <div class="header-top_area">
                 <div class="container">
                     <div class="row">
-                        <div class="col-xl-6 col-md-6 ">
+                        <div class="col-xl-6 col-md-6">
                             <div class="social_media_links">
-                                <a href="#">
-                                    <i class="fa fa-linkedin"></i>
-                                </a>
-                                <a href="#">
-                                    <i class="fa fa-facebook"></i>
-                                </a>
-                                <a href="#">
-                                    <i class="fa fa-google-plus"></i>
-                                </a>
+                                <a href="#"><i class="fa fa-linkedin"></i></a>
+                                <a href="#"><i class="fa fa-facebook"></i></a>
+                                <a href="#"><i class="fa fa-google-plus"></i></a>
                             </div>
                         </div>
                         <div class="col-xl-6 col-md-6">
                             <div class="short_contact_list">
                                 <ul>
-                                    <li><a href="#"> <i class="fa fa-envelope"></i> kalajeanclaud1@gmail.com</a></li>
-                                    <li><a href="#"> <i class="fa fa-phone"></i>+242 05 577 94 91</a></li>
+                                    <li><a href="#"><i class="fa fa-envelope"></i> kalajeanclaud1@gmail.com</a></li>
+                                    <li><a href="#"><i class="fa fa-phone"></i>+242 05 577 94 91</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -65,12 +97,11 @@
                     <div class="row align-items-center">
                         <div class="col-xl-4 col-lg-4">
                             <div class="logo">
-                                <a href="{% url 'home' %}"  style="color: blue; font-weight: bold;">
+                                <a href="{% url 'home' %}" style="color: rgb(8, 22, 10); font-weight: bold;">
                                     Clinique Life Style Santé
                                 </a>
                             </div>
                         </div>
-                        
                         <div class="col-12">
                             <div class="mobile_menu d-block d-lg-none"></div>
                         </div>
@@ -79,32 +110,28 @@
             </div>
         </div>
     </header>
-    <!-- header-end -->
+
     {% block content %}
+    {% endblock %}
 
-
-
-      {% endblock %}
-<!-- footer start -->
+    <!-- Footer -->
     <footer class="footer">
-            <div class="copy-right_text">
-                <div class="container">
-                    <div class="footer_border"></div>
-                    <div class="row">
-                        <div class="col-xl-12">
-                            <p class="copy_right text-center">
-                                <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | Life Style Santé <i class="fa fa-heart-o" aria-hidden="true"></i> Developed by Nexovate <a href="https://colorlib.com" target="_blank"></a>
-<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-                            </p>
-                        </div>
+        <div class="copy-right_text">
+            <div class="container">
+                <div class="footer_border"></div>
+                <div class="row">
+                    <div class="col-xl-12">
+                        <p class="copy_right text-center">
+                            Copyright &copy;<script>document.write(new Date().getFullYear());</script>
+                            All rights reserved | Life Style Santé <i class="fa fa-heart-o" aria-hidden="true"></i> Developed by Nexovate
+                        </p>
                     </div>
                 </div>
             </div>
-        </footer>
-<!-- footer end  -->
-    
-    <!-- JS here -->
+        </div>
+    </footer>
+
+    <!-- JS -->
     <script src="{% static 'accueil/js/vendor/modernizr-3.5.0.min.js' %}"></script>
     <script src="{% static 'accueil/js/vendor/jquery-1.12.4.min.js' %}"></script>
     <script src="{% static 'accueil/js/popper.min.js' %}"></script>
@@ -123,32 +150,12 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
     <script src="{% static 'accueil/js/jquery.magnific-popup.min.js' %}"></script>
     <script src="{% static 'accueil/js/plugins.js' %}"></script>
     <script src="{% static 'accueil/js/gijgo.min.js' %}"></script>
-    <!--contact js-->
     <script src="{% static 'accueil/js/contact.js' %}"></script>
     <script src="{% static 'accueil/js/jquery.ajaxchimp.min.js' %}"></script>
     <script src="{% static 'accueil/js/jquery.form.js' %}"></script>
     <script src="{% static 'accueil/js/jquery.validate.min.js' %}"></script>
     <script src="{% static 'accueil/js/mail-script.js' %}"></script>
-
     <script src="{% static 'accueil/js/main.js' %}"></script>
-    <script>
-        $('#datepicker').datepicker({
-            iconsLibrary: 'fontawesome',
-            icons: {
-                rightIcon: '<span class="fa fa-caret-down"></span>'
-            }
-        });
-        $('#datepicker2').datepicker({
-            iconsLibrary: 'fontawesome',
-            icons: {
-                rightIcon: '<span class="fa fa-caret-down"></span>'
-            }
-
-        });
-    $(document).ready(function() {
-    $('.js-example-basic-multiple').select2();
-});
-    </script>
 </body>
 
 </html>

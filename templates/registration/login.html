@@ -21,9 +21,11 @@
     <link href="{% static 'css/style.css' %}" rel="stylesheet">
 
     <style>
+        
+        /* Couleur de fond verte */
         body {
-            background: linear-gradient(to right, #6a11cb, #2575fc);
-            color: #fff;
+            background-color: #006633;
+            color: #333;
             font-family: 'Roboto', sans-serif;
             min-height: 100vh;
             display: flex;
@@ -33,7 +35,7 @@
 
         .container {
             max-width: 450px;
-            background: #fff;
+            background: #ffffff;
             color: #333;
             padding: 20px;
             border-radius: 10px;
@@ -45,7 +47,7 @@
             width: 100%;
             max-width: 300px;
             border-radius: 50%;
-            border: 4px solid #007bff;
+            border: 4px solid #66bb6a; /* Bordure verte pâle */
             object-fit: cover;
             margin-bottom: 15px;
         }
@@ -59,6 +61,26 @@
             display: flex;
             align-items: center;
             justify-content: center;
+        }
+
+        .btn-primary {
+            background-color: #66bb6a; /* Vert pâle */
+            border-color: #66bb6a;
+        }
+
+        .btn-primary:hover {
+            background-color: #4caf50; /* Vert plus foncé */
+            border-color: #4caf50;
+        }
+
+        .btn-info {
+            background-color: #a5d6a7; /* Vert clair */
+            border-color: #a5d6a7;
+        }
+
+        .btn-info:hover {
+            background-color: #81c784; /* Vert moyen */
+            border-color: #81c784;
         }
 
         #spinner {
@@ -77,6 +99,7 @@
         #spinner .spinner-border {
             width: 3rem;
             height: 3rem;
+            color: #66bb6a; /* Couleur verte pour le chargement */
         }
 
         @media (max-width: 768px) {
@@ -89,14 +112,13 @@
 
 <body>
     <div id="spinner" class="show bg-dark position-fixed d-flex align-items-center justify-content-center">
-        <div class="spinner-border text-primary" role="status">
+        <div class="spinner-border" role="status">
             <span class="sr-only">Chargement...</span>
         </div>
     </div>
     <form method="post">
     {% csrf_token %}
         <div class="container">
-            {% csrf_token %}
             <h3 class="mb-4">Capture d'image</h3>
             
             <video autoplay="true" id="video-element"></video>

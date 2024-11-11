@@ -1,16 +1,16 @@
 /********** Template CSS **********/
+/* Dans le fichier accueil/css/style.css */
 :root {
-    --primary: #009CFF;
-    --light: #F3F6F9;
-    --dark: #191C24;
+    --hospital-green: #28a745; /* Remplacez cette valeur par le vert que vous souhaitez */
 }
-
-.back-to-top {
-    position: fixed;
-    display: none;
-    right: 45px;
-    bottom: 45px;
-    z-index: 99;
+.text-hospital {
+    color: var(--hospital-green) !important;
+}
+.bg-hospital {
+    background-color: var(--hospital-green) !important;
+}
+.border-hospital {
+    border-color: var(--hospital-green) !important;
 }
 
 
