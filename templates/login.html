@@ -5,56 +5,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connexion</title>
+    <title>Scanner QR Code</title>
     <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
     <style>
-        /* Applique le fond et le texte général */
         body {
             background-color: #006633;
-            color: #333;
+            color: #fff;
             font-family: 'Roboto', sans-serif;
-            min-height: 100vh;
             display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
+            align-items: center;
+            height: 100vh;
             margin: 0;
-            padding: 0;
         }
 
-        /* Conteneur du message et du scanner QR */
         .container {
-            max-width: 100%;
             text-align: center;
             width: 100%;
+            max-width: 400px;
             padding: 20px;
-            box-sizing: border-box;
+            background-color: #ffffff22;
+            border-radius: 10px;
         }
 
-        /* Style du titre */
         h1 {
-            color: #fff;
-            font-size: 2em;
+            font-size: 1.8em;
             margin-bottom: 20px;
         }
 
-        /* Zone du lecteur QR code */
-        #reader {
+        video {
             width: 100%;
-            max-width: 400px;
-            margin: 20px auto;
+            max-width: 300px;
+            margin: 0 auto;
             border: 2px solid #ddd;
-            padding: 10px;
-            background-color: #fff;
+            background-color: #000;
+            border-radius: 8px;
         }
 
-        /* Zone de message */
         #message {
-            margin-top: 20px;
-            font-size: 1.1em;
+            font-size: 1em;
+            margin-top: 15px;
         }
 
-        /* Styles pour le message d'erreur ou de succès */
         .error {
             color: red;
         }
@@ -62,39 +54,19 @@
         .success {
             color: green;
         }
-
-        /* Formulaire caché */
-        form {
-            display: none;
-        }
-
-        /* Responsivité pour les petits écrans */
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 1.5em;
-            }
-
-            #reader {
-                width: 90%;
-                max-width: 300px;
-            }
-
-            #message {
-                font-size: 1em;
-            }
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Connexion avec QR Code</h1>
+        <h1>Scanner QR Code</h1>
 
-        <div id="message">Pointez votre caméra sur un QR code pour vous connecter.</div>
-        
-        <!-- Zone de scanner QR -->
-        <div id="reader"></div>
+        <!-- Zone pour le flux vidéo -->
+        <video id="video" autoplay playsinline></video>
 
-        <!-- Formulaire caché pour soumettre les données QR au backend -->
+        <!-- Message d'état -->
+        <div id="message">Point votre caméra sur un QR Code pour scanner.</div>
+
+        <!-- Formulaire caché pour envoyer les données au backend -->
         <form id="qr-login-form" action="/login" method="post">
             {% csrf_token %}
             <input type="hidden" name="qr_data" id="qr_data">
@@ -102,25 +74,67 @@
     </div>
 
     <script>
-        // Fonction appelée lorsque le QR code est scanné avec succès
-        function onScanSuccess(decodedText, decodedResult) {
-            const messageDiv = document.getElementById('message');
-            messageDiv.innerHTML = `<p class="success">QR Code scanné avec succès ! Connexion en cours...</p>`;
-            document.getElementById('qr_data').value = decodedText;
-            document.getElementById('qr-login-form').submit();
+        // Sélectionner les éléments HTML nécessaires
+        const videoElement = document.getElementById("video");
+        const messageDiv = document.getElementById("message");
+        const qrLoginForm = document.getElementById("qr-login-form");
+        const qrDataInput = document.getElementById("qr_data");
+
+        // Détecter si l'appareil est mobile ou desktop
+        function isMobileDevice() {
+            return /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         }
 
-        // Fonction appelée en cas d'échec du scan
-        function onScanFailure(error) {
-            document.getElementById('message').innerHTML = `<p class="error">Échec du scan du QR Code. Veuillez réessayer.</p>`;
-        }
+        // Initialiser le scanner QR
+        const html5QrCode = new Html5Qrcode("video");
 
-        // Initialisation du scanner QR code
-        const html5QrcodeScanner = new Html5QrcodeScanner(
-            "reader", { fps: 10, qrbox: 250 }
-        );
+        // Démarrer le flux vidéo
+        Html5Qrcode.getCameras()
+            .then(cameras => {
+                if (cameras && cameras.length > 0) {
+                    let selectedCameraId;
 
-        html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+                    // Si mobile, essayer de choisir la caméra arrière
+                    if (isMobileDevice()) {
+                        const backCamera = cameras.find(camera => 
+                            camera.label.toLowerCase().includes("back")
+                        );
+                        selectedCameraId = backCamera ? backCamera.id : cameras[0].id;
+                    } else {
+                        // Sinon, choisir la caméra par défaut
+                        selectedCameraId = cameras[0].id;
+                    }
+
+                    // Lancer le scanner avec la caméra choisie
+                    html5QrCode.start(
+                        selectedCameraId, 
+                        { fps: 10, qrbox: 250 },
+                        decodedText => {
+                            // Succès : afficher un message et soumettre le formulaire
+                            messageDiv.innerHTML = `<p class="success">QR Code détecté avec succès ! Connexion en cours...</p>`;
+                            qrDataInput.value = decodedText;
+                            qrLoginForm.submit();
+                        },
+                        error => {
+                            // Échec : afficher un message d'erreur
+                            console.warn(`Erreur de scan : ${error}`);
+                            messageDiv.innerHTML = `<p class="error">Impossible de lire le QR Code. Essayez encore.</p>`;
+                        }
+                    );
+                } else {
+                    // Aucune caméra trouvée
+                    messageDiv.innerHTML = `<p class="error">Aucune caméra détectée.</p>`;
+                }
+            })
+            .catch(err => {
+                console.error("Erreur lors de l'accès à la caméra :", err);
+                messageDiv.innerHTML = `<p class="error">Erreur : impossible d'accéder à la caméra.</p>`;
+            });
+
+        // Arrêter le flux de la caméra lorsqu'on quitte la page
+        window.addEventListener("beforeunload", () => {
+            html5QrCode.stop().catch(err => console.warn("Erreur lors de l'arrêt du scanner :", err));
+        });
     </script>
 </body>
 </html>
