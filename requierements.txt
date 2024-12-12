@@ -3,9 +3,11 @@ chardet==5.2.0
 colorama==0.4.6
 Django==5.1.4
 django-countries==7.6.1
+gunicorn==23.0.0
 mysqlclient==2.2.6
 numpy==2.2.0
 opencv-python==4.10.0.84
+packaging==24.2
 pillow==11.0.0
 pyzbar==0.1.9
 qrcode==8.0
