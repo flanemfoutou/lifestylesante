@@ -10,29 +10,46 @@
         <div class="col-12 col-md-8 col-lg-6">
             <div class="card">
                 <div class="card-header text-center bg-transparent border-0">
-                    <img src="{{ employe.photo.url }}" alt="{{ employe.nom }}" 
-                         class="img-fluid rounded-circle mx-auto" 
-                         style="height: 180px; width: 180px; border: 5px solid  #0bc5af;">
+                    {% if employe.photo %}
+                        <img src="{{ employe.photo.url }}" alt="{{ employe.nom }}" 
+                             class="img-fluid rounded-circle mx-auto" 
+                             style="height: 180px; width: 180px; border: 5px solid #0bc5af;">
+                    {% else %}
+                        <img src="{% static 'images/default-avatar.png' %}" alt="Photo non disponible" 
+                             class="img-fluid rounded-circle mx-auto" 
+                             style="height: 180px; width: 180px; border: 5px solid #ccc;">
+                    {% endif %}
                 </div>
-
                 <div class="card-body text-center">
                     <h5 class="card-title" style="color: #00796b;">{{ employe.nom }} {{ employe.prenom }}</h5>
-                    <p class="card-text text-muted">{{ employe.fonction }}</p>
+                    <p class="card-text text-muted">{{ employe.fonction.nom }}</p>
                 </div>
 
                 <ul class="list-group list-group-flush text-center">
-                    <li class="list-group-item text-muted">Genre : {{ employe.genre }}</li>
+                    <li class="list-group-item text-muted">Genre : {{ employe.sexe }}</li>
+                    <li class="list-group-item text-muted">Date de naissance : {{ employe.date_naissance|date:"d/m/Y" }}</li>
+                    <li class="list-group-item text-muted">Lieu de naissance : {{ employe.lieu_naissance }}</li>
                     <li class="list-group-item text-muted">Nationalité : {{ employe.nationalite }}</li>
+                    <li class="list-group-item text-muted">Fonction : {{ employe.fonction }}</li>
+                    <li class="list-group-item text-muted">Département : {{ employe.departement }}</li>
                     <li class="list-group-item text-muted">Téléphone : {{ employe.telephone }}</li>
                     <li class="list-group-item text-muted">Email : {{ employe.email }}</li>
                     <li class="list-group-item text-muted">Adresse : {{ employe.adresse }}</li>
-                    <li class="list-group-item text-muted">Matricule : {{ employe.matricule_employe }}</li>
                 </ul>
+                <div class="card-footer text-center">
+                    {% if employe.qr_code %}
+                        <img src="{{ employe.qr_code.url }}" alt="QR Code" class="img-fluid mt-2" style="max-width: 150px;">
+                    {% else %}
+                        <span class="text-muted">QR Code non disponible</span>
+                    {% endif %}
+                    <p class="text-muted mt-2">QR Code de l'employé</p>
+                </div>
 
                 <div class="card-body text-center">
                     <a href="{% url 'marquer_arrivee' employe.id %}" class="btn btn-success" style="background-color: #00796b; border-color: #00796b; margin: 5px; padding: 10px 20px;">
                         <i class="bi bi-arrow-up-circle"></i> Arrivée
                     </a>
+                    
                     <a href="{% url 'marquer_depart' employe.id %}" class="btn btn-danger" style="background-color: #e57373; border-color: #e57373; margin: 5px; padding: 10px 20px;">
                         <i class="bi bi-arrow-down-circle"></i> Départ
                     </a>

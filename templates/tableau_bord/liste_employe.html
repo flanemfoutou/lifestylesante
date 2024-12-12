@@ -10,30 +10,50 @@
             <table class="table table-striped table-hover table-bordered align-middle text-center mt-4 mx-auto" style="width: auto;">
                 <thead class="table-dark">
                     <tr>
-                        <th scope="col">Matricule</th>
+                        <th scope="col">Photo</th> <!-- Nouvelle colonne -->
                         <th scope="col">Nom</th>
                         <th scope="col">Prénom</th>
                         <th scope="col">Genre</th>
+                        <th scope="col">Date de naissance</th>
+                        <th scope="col">Lieu de naissance</th>
                         <th scope="col">Nationalité</th>
                         <th scope="col">Fonction</th>
                         <th scope="col">Téléphone</th>
                         <th scope="col">Adresse</th>
                         <th scope="col">Email</th>
+                        <th scope="col">Département</th>
+                        <th scope="col">QR Code</th>
                         <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for employe in employes %}
                     <tr>
-                        <th scope="row">{{ employe.matricule_employe }}</th>
+                        <td>
+                            {% if employe.photo %}
+                                <img src="{{ employe.photo.url }}" alt="Photo de {{ employe.nom }}" class="img-fluid" style="max-width: 50px; height: auto;">
+                            {% else %}
+                                <span class="text-muted">Non disponible</span>
+                            {% endif %}
+                        </td>
                         <td>{{ employe.nom }}</td>
                         <td>{{ employe.prenom }}</td>
-                        <td>{{ employe.genre }}</td>
+                        <td>{{ employe.sexe }}</td>
+                        <td>{{ employe.date_naissance|date:"d/m/Y" }}</td>
+                        <td>{{ employe.lieu_naissance }}</td>
                         <td>{{ employe.nationalite }}</td>
                         <td>{{ employe.fonction }}</td>
                         <td>{{ employe.telephone }}</td>
                         <td>{{ employe.adresse }}</td>
                         <td>{{ employe.email }}</td>
+                        <td>{{ employe.departement }}</td>
+                        <td>
+                            {% if employe.qr_code %}
+                                <img src="{{ employe.qr_code.url }}" alt="QR Code" class="img-fluid" style="max-width: 50px;">
+                            {% else %}
+                                <span class="text-muted">Non disponible</span>
+                            {% endif %}
+                        </td>
                         <td>
                             <a href="{% url 'modifier_employe' employe.id %}" class="btn btn-warning btn-sm me-2">
                                 <i class="bi bi-pencil-square"></i> Modifier
@@ -42,10 +62,9 @@
                                 <i class="bi bi-trash"></i> Supprimer
                             </a>
                         </td>
-                        
                     </tr>
                     {% endfor %}
-                </tbody>
+                </tbody>    
             </table>
         </div>
         {% else %}

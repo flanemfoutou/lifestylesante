@@ -1,0 +1,126 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion</title>
+    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+    <style>
+        /* Applique le fond et le texte général */
+        body {
+            background-color: #006633;
+            color: #333;
+            font-family: 'Roboto', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Conteneur du message et du scanner QR */
+        .container {
+            max-width: 100%;
+            text-align: center;
+            width: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* Style du titre */
+        h1 {
+            color: #fff;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        /* Zone du lecteur QR code */
+        #reader {
+            width: 100%;
+            max-width: 400px;
+            margin: 20px auto;
+            border: 2px solid #ddd;
+            padding: 10px;
+            background-color: #fff;
+        }
+
+        /* Zone de message */
+        #message {
+            margin-top: 20px;
+            font-size: 1.1em;
+        }
+
+        /* Styles pour le message d'erreur ou de succès */
+        .error {
+            color: red;
+        }
+
+        .success {
+            color: green;
+        }
+
+        /* Formulaire caché */
+        form {
+            display: none;
+        }
+
+        /* Responsivité pour les petits écrans */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.5em;
+            }
+
+            #reader {
+                width: 90%;
+                max-width: 300px;
+            }
+
+            #message {
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Connexion avec QR Code</h1>
+
+        <div id="message">Pointez votre caméra sur un QR code pour vous connecter.</div>
+        
+        <!-- Zone de scanner QR -->
+        <div id="reader"></div>
+
+        <!-- Formulaire caché pour soumettre les données QR au backend -->
+        <form id="qr-login-form" action="/login" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="qr_data" id="qr_data">
+        </form>
+    </div>
+
+    <script>
+        // Fonction appelée lorsque le QR code est scanné avec succès
+        function onScanSuccess(decodedText, decodedResult) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.innerHTML = `<p class="success">QR Code scanné avec succès ! Connexion en cours...</p>`;
+            document.getElementById('qr_data').value = decodedText;
+            document.getElementById('qr-login-form').submit();
+        }
+
+        // Fonction appelée en cas d'échec du scan
+        function onScanFailure(error) {
+            document.getElementById('message').innerHTML = `<p class="error">Échec du scan du QR Code. Veuillez réessayer.</p>`;
+        }
+
+        // Initialisation du scanner QR code
+        const html5QrcodeScanner = new Html5QrcodeScanner(
+            "reader", { fps: 10, qrbox: 250 }
+        );
+
+        html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+    </script>
+</body>
+</html>

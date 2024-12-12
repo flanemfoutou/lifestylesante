@@ -20,7 +20,6 @@
                         <thead>
                             <tr>
                                 <th scope="col">Numéro de présence</th>
-                                <th scope="col">Matricule</th>
                                 <th scope="col">Nom</th>
                                 <th scope="col">Prénom</th>
                                 <th scope="col">Genre</th>
@@ -34,10 +33,9 @@
                             {% for arrivee in arrivees %}
                             <tr>
                                 <th scope="row">{{ arrivee.id }}</th>
-                                <td>{{ arrivee.employe.matricule_employe }}</td>
                                 <td>{{ arrivee.employe.nom }}</td>
                                 <td>{{ arrivee.employe.prenom }}</td>
-                                <td>{{ arrivee.employe.genre }}</td>
+                                <td>{{ arrivee.employe.sexe }}</td>
                                 <td>{{ arrivee.employe.nationalite }}</td>
                                 <td>{{ arrivee.employe.fonction }}</td>
                                 <td>{{ arrivee.arrivee }}</td>
@@ -70,7 +68,6 @@
                         <thead>
                             <tr>
                                 <th scope="col">Numéro de présence</th>
-                                <th scope="col">Matricule</th>
                                 <th scope="col">Nom</th>
                                 <th scope="col">Prénom</th>
                                 <th scope="col">Genre</th>
@@ -84,10 +81,9 @@
                             {% for depart in departs %}
                             <tr>
                                 <th scope="row">{{ depart.id }}</th>
-                                <td>{{ depart.employe.matricule_employe }}</td>
                                 <td>{{ depart.employe.nom }}</td>
                                 <td>{{ depart.employe.prenom }}</td>
-                                <td>{{ depart.employe.genre }}</td>
+                                <td>{{ depart.employe.sexe }}</td>
                                 <td>{{ depart.employe.nationalite }}</td>
                                 <td>{{ depart.employe.fonction }}</td>
                                 <td>{{ depart.depart }}</td>
