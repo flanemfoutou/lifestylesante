@@ -87,14 +87,15 @@ if DEBUG:
 else:
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'ENGINE': 'django.db.backends.mysql',
             'NAME': 'lifestylesante_db',
             'USER': 'debian',
             'PASSWORD': 'db@2024',
             'HOST': 'localhost',
-            'PORT': '5432',
+            'PORT': '3306',
         }
     }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
