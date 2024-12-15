@@ -1,139 +1,173 @@
-{% load static %}
-
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scanner QR Code</title>
-    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+    <title>QR Code Scanner</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         body {
-            background-color: #006633;
-            color: #fff;
             font-family: 'Roboto', sans-serif;
+            margin: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            margin: 0;
+            background-color: #006633;
         }
 
-        .container {
-            text-align: center;
-            width: 100%;
-            max-width: 400px;
+        .scanner-container {
+            background: #ffffff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            width: 400px;
+            max-width: 90%;
             padding: 20px;
-            background-color: #ffffff22;
-            border-radius: 10px;
+            text-align: center;
         }
 
         h1 {
-            font-size: 1.8em;
+            font-size: 24px;
             margin-bottom: 20px;
+            color: #333;
+        }
+
+        .camera-container {
+            width: 100%;
+            height: 300px;
+            margin: 20px 0;
+            position: relative;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
         }
 
         video {
             width: 100%;
-            max-width: 300px;
-            margin: 0 auto;
-            border: 2px solid #ddd;
-            background-color: #000;
-            border-radius: 8px;
+            height: 100%;
+            object-fit: cover;
         }
 
-        #message {
-            font-size: 1em;
-            margin-top: 15px;
+        .instructions {
+            font-size: 14px;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .status {
+            font-size: 16px;
+            margin-top: 10px;
+            color: #555;
         }
 
         .error {
-            color: red;
-        }
-
-        .success {
-            color: green;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #fbe7e7;
+            border: 1px solid #f5c2c2;
+            color: #a33a3a;
+            border-radius: 6px;
+            display: none;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Scanner QR Code</h1>
-
-        <!-- Zone pour le flux vidéo -->
-        <video id="video" autoplay playsinline></video>
-
-        <!-- Message d'état -->
-        <div id="message">Point votre caméra sur un QR Code pour scanner.</div>
-
-        <!-- Formulaire caché pour envoyer les données au backend -->
-        <form id="qr-login-form" action="/login" method="post">
+    <div class="scanner-container">
+        <h1>QR Code Scanner</h1>
+        <div class="camera-container" id="camera">
+            <video id="video" autoplay></video>
+            <canvas id="canvas"></canvas>
+        </div>
+        <p class="instructions">Positionnez le code QR à l'intérieur du cadre pour le scanner.</p>
+        <p class="status" id="status">Scan en cours...</p>
+        <form method="POST" action="/login/">
             {% csrf_token %}
-            <input type="hidden" name="qr_data" id="qr_data">
+            <input type="hidden" id="qrDataInput" name="qr_data">
         </form>
+        <div class="error" id="errorMessage"></div>
     </div>
 
+    <script src="https://cozmo.github.io/jsQR/jsQR.js"></script>
     <script>
-        // Sélectionner les éléments HTML nécessaires
-        const videoElement = document.getElementById("video");
-        const messageDiv = document.getElementById("message");
-        const qrLoginForm = document.getElementById("qr-login-form");
-        const qrDataInput = document.getElementById("qr_data");
+        document.addEventListener("DOMContentLoaded", () => {
+            const video = document.getElementById('video');
+            const canvas = document.getElementById('canvas');
+            const context = canvas.getContext('2d');
+            const qrDataInput = document.getElementById('qrDataInput');
+            const errorMessage = document.getElementById('errorMessage');
+            const status = document.getElementById('status');
+            let stream;
 
-        // Détecter si l'appareil est mobile ou desktop
-        function isMobileDevice() {
-            return /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        }
-
-        // Initialiser le scanner QR
-        const html5QrCode = new Html5Qrcode("video");
-
-        // Démarrer le flux vidéo
-        Html5Qrcode.getCameras()
-            .then(cameras => {
-                if (cameras && cameras.length > 0) {
-                    let selectedCameraId;
-
-                    // Si mobile, essayer de choisir la caméra arrière
-                    if (isMobileDevice()) {
-                        const backCamera = cameras.find(camera => 
-                            camera.label.toLowerCase().includes("back")
-                        );
-                        selectedCameraId = backCamera ? backCamera.id : cameras[0].id;
-                    } else {
-                        // Sinon, choisir la caméra par défaut
-                        selectedCameraId = cameras[0].id;
-                    }
-
-                    // Lancer le scanner avec la caméra choisie
-                    html5QrCode.start(
-                        selectedCameraId, 
-                        { fps: 10, qrbox: 250 },
-                        decodedText => {
-                            // Succès : afficher un message et soumettre le formulaire
-                            messageDiv.innerHTML = `<p class="success">QR Code détecté avec succès ! Connexion en cours...</p>`;
-                            qrDataInput.value = decodedText;
-                            qrLoginForm.submit();
-                        },
-                        error => {
-                            // Échec : afficher un message d'erreur
-                            console.warn(`Erreur de scan : ${error}`);
-                            messageDiv.innerHTML = `<p class="error">Impossible de lire le QR Code. Essayez encore.</p>`;
-                        }
-                    );
-                } else {
-                    // Aucune caméra trouvée
-                    messageDiv.innerHTML = `<p class="error">Aucune caméra détectée.</p>`;
+            async function startScanner() {
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    showError('Camera API not supported in this browser. Please use a modern browser like Chrome or Firefox.');
+                    return;
                 }
-            })
-            .catch(err => {
-                console.error("Erreur lors de l'accès à la caméra :", err);
-                messageDiv.innerHTML = `<p class="error">Erreur : impossible d'accéder à la caméra.</p>`;
-            });
 
-        // Arrêter le flux de la caméra lorsqu'on quitte la page
-        window.addEventListener("beforeunload", () => {
-            html5QrCode.stop().catch(err => console.warn("Erreur lors de l'arrêt du scanner :", err));
+                try {
+                    stream = await navigator.mediaDevices.getUserMedia({
+                        video: { facingMode: 'environment' },
+                        audio: false
+                    });
+
+                    video.srcObject = stream;
+                    video.addEventListener("loadedmetadata", () => {
+                        video.play();
+                        status.textContent = 'Scan en cours...';
+                        scanQRCode();
+                    });
+                } catch (error) {
+                    showError('Unable to access the camera. Please check permissions and try again.');
+                    console.error('Camera error:', error);
+                }
+            }
+
+            function scanQRCode() {
+                if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                    const code = jsQR(imageData.data, canvas.width, canvas.height);
+
+                    if (code) {
+                        qrDataInput.value = code.data;
+                        stopScanner();
+                        submitQRData();
+                    } else {
+                        requestAnimationFrame(scanQRCode);
+                    }
+                }
+            }
+
+            function stopScanner() {
+                if (stream) {
+                    const tracks = stream.getTracks();
+                    tracks.forEach(track => track.stop());
+                    status.textContent = 'Scanner stopped.';
+                }
+            }
+
+            function submitQRData() {
+                const form = document.querySelector('form');
+                form.submit();
+            }
+
+            function showError(message) {
+                errorMessage.textContent = message;
+                errorMessage.style.display = 'block';
+            }
+
+            startScanner();
         });
     </script>
 </body>
