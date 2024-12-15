@@ -23,9 +23,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-7h$zd(%a3m+@+zbpj#%jfafgb3hid6-ev$!_3pl8%xe%4ee1(m'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
+CSRF_TRUSTED_ORIGINS = ['https://lifestylesante.org', 'http://lifestylesante.org', 'https://www.lifestylesante.org', 'http://www.lifestylesante.org']   
 
 
 # Application definition
@@ -75,16 +76,24 @@ WSGI_APPLICATION = 'main.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',  # Utiliser MySQL comme moteur de base de données
-        'NAME': 'module1',  # Remplacez par le nom de votre base de données
-        'USER': 'root',         # Remplacez par votre nom d'utilisateur MySQL
-        'PASSWORD': '',        # Remplacez par votre mot de passe MySQL
-        'HOST': 'localhost',                     # Généralement 'localhost' si vous travaillez en local
-        'PORT': '3306',                          # Le port par défaut pour MySQL est 3306
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'lifestylesante_db',
+            'USER': 'debian',
+            'PASSWORD': 'db@2024',
+            'HOST': 'localhost',
+            'PORT': '3306',
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -120,13 +129,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
-
-MEDIA_URL = 'medias/'
-
-STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_URL = '/static/'
+MEDIA_URL = '/medias/'
 
 MEDIA_ROOT = BASE_DIR / 'medias'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
 
 
 # Default primary key field type
