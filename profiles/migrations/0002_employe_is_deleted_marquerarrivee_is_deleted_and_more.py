@@ -15,22 +15,22 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name='employe',
-            name='is_deleted',
+            name='isDeleted',
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
             model_name='marquerarrivee',
-            name='is_deleted',
+            name='isDeleted',
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
             model_name='marquerdepart',
-            name='is_deleted',
+            name='isDeleted',
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
             model_name='rapportmensuel',
-            name='is_deleted',
+            name='isDeleted',
             field=models.BooleanField(default=False),
         ),
         migrations.AlterField(

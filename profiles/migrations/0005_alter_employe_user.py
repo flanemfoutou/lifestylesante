@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('profiles', '0004_alter_marquerarrivee_is_deleted_and_more'),
+        ('profiles', '0004_alter_marquerarrivee_isDeleted_and_more'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 

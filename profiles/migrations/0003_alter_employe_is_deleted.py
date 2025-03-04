@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('profiles', '0002_employe_is_deleted_marquerarrivee_is_deleted_and_more'),
+        ('profiles', '0002_employe_isDeleted_marquerarrivee_isDeleted_and_more'),
     ]
 
     operations = [
         migrations.AlterField(
             model_name='employe',
-            name='is_deleted',
+            name='isDeleted',
             field=models.BooleanField(default=True),
         ),
     ]
