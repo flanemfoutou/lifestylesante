@@ -44,7 +44,6 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('arrivee', models.BooleanField(default=True)),
                 ('date_arrivee', models.DateTimeField(auto_now_add=True)),
-                ('montant', models.DecimalField(decimal_places=2, default=0.0, max_digits=10)),
                 ('employe', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='profiles.employe')),
             ],
         ),
