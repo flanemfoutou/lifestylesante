@@ -28,10 +28,10 @@ DEBUG = False
 ALLOWED_HOSTS = ['*']
 CSRF_TRUSTED_ORIGINS = ['https://lifestylesante.org', 'http://lifestylesante.org', 'https://www.lifestylesante.org', 'http://www.lifestylesante.org']   
 
-
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -275,6 +275,11 @@ JAZZMIN_SETTINGS = {
     "hide_recent_actions": False,  # Cache la section "Actions récentes"
 }
 
+
+
+
+
+
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
@@ -309,15 +314,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = '/static/'
-MEDIA_URL = '/medias/'
+STATIC_URL = 'static/'
+
+MEDIA_URL = 'medias/'
+
+STATICFILES_DIRS = [BASE_DIR / 'static']
 
 MEDIA_ROOT = BASE_DIR / 'medias'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-
-STATICFILES_DIRS = [
-    BASE_DIR / 'static',
-]
 
 
 # Default primary key field type
@@ -329,4 +332,3 @@ LOGIN_URL = 'login/'
 LOGIN_REDIRECT = 'accueil'
 
 LOGOUT_REDIRECT = 'login_view'
-
