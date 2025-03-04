@@ -1,37 +1,121 @@
-{% extends 'base/base1.html' %}
-{% load static %}
-
-{% block content %}
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-sm-12 col-md-8 col-lg-6">
-            <form method="post">
-                {% csrf_token %}
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">Marquer votre arrivée {{ employe.nom }} {{ employe.prenom }}</h5>
-                        {{ form.as_p }}
-                    </div>
-                    <div class="card-footer">
-                        <button type="submit" class="btn btn-primary">Valider</button>
-                        <a href="{% url 'accueil' %}" class="btn btn-secondary">Retour</a>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-</div><br><br><br><br><br><br><br><br><br><br>
-{% endblock %}
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function(position) {
-                document.getElementById("id_latitude").value = position.coords.latitude;
-                document.getElementById("id_longitude").value = position.coords.longitude;
-            });
-        } else {
-            alert("La géolocalisation n'est pas supportée par ce navigateur.");
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marquer l'arrivée</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(45deg, #fcb045, #fd1d1d, #833ab4 60%, #4c6ef5);
+            margin: 0;
+            color: white;
         }
-    });
-</script>
+        
+        .container {
+            background: white;
+            color: black;
+            padding: 25px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            animation: fadeIn 1s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            margin-bottom: 10px;
+            color: #d62976;
+        }
+        
+        .message {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            opacity: 0;
+            transform: translateY(-10px);
+            animation: slideDown 0.5s ease-in-out forwards;
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        form {
+            margin-top: 15px;
+        }
+        
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            border: none;
+            font-size: 16px;
+        }
+        
+        button {
+            background: #d62976;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s ease-in-out;
+        }
+        
+        button:hover {
+            background: #b41f60;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags == 'error' %}
+                    <div class="message error">{{ message }}</div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+
+        <h2>Marquer votre arrivée</h2>
+        <p>{{ employe.nom }} {{ employe.prenom }}</p>
+
+        <form method="post" id="arrivalForm">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Valider</button>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let messages = document.querySelectorAll('.message');
+            messages.forEach((message, index) => {
+                setTimeout(() => {
+                    message.style.opacity = '0';
+                    message.style.transform = 'translateY(-10px)';
+                    setTimeout(() => { message.remove(); }, 500);
+                }, 3000 + (index * 500));
+            });
+        });
+    </script>
+</body>
+</html>

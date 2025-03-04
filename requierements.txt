@@ -16,3 +16,6 @@ segno==1.6.1
 sqlparse==0.5.3
 typing_extensions==4.12.2
 tzdata==2024.2
+django-jazzmin==3.0.1
+et_xmlfile==2.0.0
+openpyxl==3.1.5

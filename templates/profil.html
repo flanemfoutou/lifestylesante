@@ -1,0 +1,153 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lifestyle</title>
+    <style>
+        body {
+            background: linear-gradient(to right, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5);
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .profile-container {
+            background: white;
+            color: black;
+            padding: 20px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fade-in 1s ease-out forwards;
+        }
+        @keyframes fade-in {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .profile-pic {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 4px solid #d62976;
+            display: inline-block;
+            background: url("{{ employe.photo.url }}") center/cover;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .profile-pic:hover {
+            transform: rotate(10deg) scale(1.05);
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 10px;
+        }
+        .btn {
+            background: #d62976;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 5px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s, background 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            background: #b2225c;
+        }
+        .btn:active {
+            transform: scale(0.95);
+        }
+        .btn-blue {
+            background: #4f5bd5;
+        }
+        .btn-blue:hover {
+            background: #3b49a6;
+        }
+        .btn-red {
+            background: #e57373;
+        }
+        .btn-red:hover {
+            background: #d62976;
+        }
+        .btn-logout {
+            background: #fa7e1e;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .posts {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+            margin-top: 10px;
+        }
+        .post img {
+            width: 100%;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 5px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .post img:hover {
+            transform: scale(1.1);
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <a href="{% url 'logout' %}" class="btn btn-logout">Déconnexion</a>
+        <div class="profile-pic"></div>
+        <h2>{{ employe.nom }} {{ employe.prenom }}</h2>
+        <p>@bynexovate</p>
+        <div class="stats">
+            <div><strong>Fonction</strong><br>{{ employe.fonction }}</div>
+            <div><strong>Département</strong><br>{{ employe.departement }}</div>
+            <div><strong>Nationalité</strong><br>{{ employe.nationalite }}</div>
+        </div>
+        <div class="btn-container">
+            <a href="{% url 'marquer_arrivee' employe.id %}" class="btn btn-blue">Arrivée</a>
+            <a href="{% url 'marquer_depart' employe.id %}" class="btn btn-red">Départ</a>
+        </div>
+        <div class="posts">
+            <div class="post"><img src="{% static 'img/femme-enceinte.jpg' %}" alt="Femme enceinte"></div>
+            <div class="post"><img src="{% static 'img/gynecologie.jpg' %}" alt="Gynécologie"></div>
+            <div class="post"><img src="{% static 'img/medecin.jpg' %}" alt="Médecin"></div>
+            <div class="post"><img src="{% static 'img/bebe.jpg' %}" alt="Bébé"></div>
+            <div class="post"><img src="{% static 'img/medicaments.jpg' %}" alt="Médicaments"></div>
+            <div class="post"><img src="{% static 'img/hopital.jpg' %}" alt="Hôpital"></div>
+            <div class="post"><img src="{% static 'img/echographie.jpg' %}" alt="Échographie"></div>
+            <div class="post"><img src="{% static 'img/infirmiere.jpg' %}" alt="Infirmière"></div>
+            <div class="post"><img src="{% static 'img/soins-medicaux.jpg' %}" alt="Soins médicaux"></div>
+        </div>
+    </div>
+</body>
+</html>
