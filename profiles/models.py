@@ -49,20 +49,20 @@ class Employe(models.Model):
     qr_code = models.ImageField(upload_to='qr_codes/', verbose_name="QR Code", blank=True, null=True)
     auth_token = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, verbose_name="Token d'authentification")
     date_creation = models.DateTimeField(auto_now_add=True, verbose_name="Date et heure de création")
-    is_deleted = models.BooleanField(default=True)
+    # is_deleted = models.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.nom} {self.prenom} - {self.fonction}"
     
-    def soft_delete(self):
-            """Marque l'employé comme supprimé au lieu de le supprimer réellement"""
-            self.is_deleted = True
-            self.save()
+    # def soft_delete(self):
+    #         """Marque l'employé comme supprimé au lieu de le supprimer réellement"""
+    #         self.is_deleted = True
+    #         self.save()
 
-    def restore(self):
-        """Restaure un employé supprimé"""
-        self.is_deleted = False
-        self.save()
+    # def restore(self):
+    #     """Restaure un employé supprimé"""
+    #     self.is_deleted = False
+    #     self.save()
 
     def generate_qr_code(self):
         """
@@ -193,7 +193,7 @@ class MarquerArrivee(models.Model):
     arrivee = models.BooleanField(default=True)  
     date_arrivee = models.DateTimeField(auto_now_add=True)
     montant = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    is_deleted = models.BooleanField(default=True)
+    # is_deleted = models.BooleanField(default=True)
 
     def save(self, *args, **kwargs):
         """
@@ -227,20 +227,20 @@ class MarquerArrivee(models.Model):
     def __str__(self):
         return f"Arrivée de {self.employe} | {self.date_arrivee} | {'Validée' if self.arrivee else 'Non Validée'}"
 
-    def soft_delete(self):
-        self.is_deleted = True
-        self.save()
+    # def soft_delete(self):
+    #     self.is_deleted = True
+    #     self.save()
 
-    def restore(self):
-        self.is_deleted = False
-        self.save()
+    # def restore(self):
+    #     self.is_deleted = False
+    #     self.save()
 
 
 class MarquerDepart(models.Model):
     employe = models.ForeignKey('Employe', on_delete=models.SET_NULL, null=True, blank=True)
     depart = models.BooleanField(default=True)  # Modifié par défaut à False
     date_depart = models.DateTimeField(auto_now_add=True)
-    is_deleted = models.BooleanField(default=False)
+    # is_deleted = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         """
@@ -272,13 +272,13 @@ class MarquerDepart(models.Model):
     def __str__(self):
         return f"Départ de {self.employe} | {self.date_depart} | {'Validé' if self.depart else 'Non Validé'}"
 
-    def soft_delete(self):
-        self.is_deleted = True
-        self.save()
+    # def soft_delete(self):
+    #     self.is_deleted = True
+    #     self.save()
 
-    def restore(self):
-        self.is_deleted = False
-        self.save()
+    # def restore(self):
+    #     self.is_deleted = False
+    #     self.save()
 
 
 class RapportMensuel(models.Model):
@@ -288,7 +288,7 @@ class RapportMensuel(models.Model):
     total_arrivees = models.IntegerField(default=0, verbose_name="Arrivées signalées")
     total_departs = models.IntegerField(default=0, verbose_name="Départs signalés")
     total_montant = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, verbose_name="Gain mensuel")
-    is_deleted = models.BooleanField(default=True)
+    # is_deleted = models.BooleanField(default=True)
     class Meta:
         unique_together = ('employe', 'mois', 'annee')
 
@@ -330,12 +330,12 @@ class RapportMensuel(models.Model):
             f"Montant: {self.total_montant} XAF"
         )
     
-    def soft_delete(self):
-        self.is_deleted = True
-        self.save()
+    # def soft_delete(self):
+    #     self.is_deleted = True
+    #     self.save()
 
-    def restore(self):
-        self.is_deleted = False
-        self.save()
+    # def restore(self):
+    #     self.is_deleted = False
+    #     self.save()
 
 
