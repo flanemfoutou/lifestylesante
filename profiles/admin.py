@@ -96,3 +96,4 @@ class RapportMensuelAdmin(BaseAdmin):
     list_filter = ('mois', 'annee', 'isDeleted')
     search_fields = ('employe__nom', 'employe__prenom')
     ordering = ('-annee', '-mois')
+
