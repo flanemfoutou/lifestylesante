@@ -129,7 +129,7 @@ def get_time_slot_interval(date_time):
     t = localtime(date_time)
     if t.hour == 5 or (t.hour == 6 and t.minute < 30):
         return "matin_1"
-    elif t.hour == 9 and t.minute < 30:
+    elif t.hour == 8 and t.minute < 30:
         return "matin_2"
     elif t.hour == 15 and t.minute < 30:
         return "apres_midi"
