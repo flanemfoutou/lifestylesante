@@ -49,7 +49,7 @@ class Employe(models.Model):
     qr_code = models.ImageField(upload_to='qr_codes/', verbose_name="QR Code", blank=True, null=True)
     auth_token = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, verbose_name="Token d'authentification")
     date_creation = models.DateTimeField(auto_now_add=True, verbose_name="Date et heure de création")
-    # is_deleted = models.BooleanField(default=True)
+    is_deleted = models.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.nom} {self.prenom} - {self.fonction}"
@@ -193,7 +193,7 @@ class MarquerArrivee(models.Model):
     arrivee = models.BooleanField(default=True)  
     date_arrivee = models.DateTimeField(auto_now_add=True)
     montant = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    # is_deleted = models.BooleanField(default=True)
+    is_deleted = models.BooleanField(default=True)
 
     def save(self, *args, **kwargs):
         """
@@ -240,7 +240,7 @@ class MarquerDepart(models.Model):
     employe = models.ForeignKey('Employe', on_delete=models.SET_NULL, null=True, blank=True)
     depart = models.BooleanField(default=True)  # Modifié par défaut à False
     date_depart = models.DateTimeField(auto_now_add=True)
-    # is_deleted = models.BooleanField(default=False)
+    is_deleted = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         """
