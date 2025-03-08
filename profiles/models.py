@@ -288,7 +288,7 @@ class RapportMensuel(models.Model):
     total_arrivees = models.IntegerField(default=0, verbose_name="Arrivées signalées")
     total_departs = models.IntegerField(default=0, verbose_name="Départs signalés")
     total_montant = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, verbose_name="Gain mensuel")
-    # is_deleted = models.BooleanField(default=True)
+    is_deleted = models.BooleanField(default=True)
     class Meta:
         unique_together = ('employe', 'mois', 'annee')
 
